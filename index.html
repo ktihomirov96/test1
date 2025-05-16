@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Таблица за проследимост на ремонти</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f4f6f8;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background: white;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+            font-size: 14px;
+        }
+        th {
+            background-color: #2a75bb;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        /* Chat box */
+        #chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 320px;
+            max-height: 400px;
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            font-size: 14px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        #chat-header {
+            background-color: #2a75bb;
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+        }
+        #chat-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+        }
+        #chat-input-container {
+            display: flex;
+        }
+        #chat-input {
+            flex: 1;
+            border: none;
+            padding: 10px;
+            font-size: 14px;
+            border-top: 1px solid #ccc;
+        }
+        #chat-send-btn {
+            background-color: #2a75bb;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            border-top: 1px solid #1f5792;
+        }
+        #chat-send-btn:hover {
+            background-color: #1f5792;
+        }
+    </style>
+</head>
+<body>
+    <h1>Таблица за проследимост на ремонти</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Матрица</th>
+                <th>Описание на ремонта</th>
+                <th>Дата на ремонта</th>
+                <th>Брой ремонти</th>
+                <th>Честота на повреди</th>
+                <th>Статус</th>
+                <th>Краен срок</th>
+                <th>Телефон за известия</th>
+                <th>SMS статус</th>
+                <th>Цвят на спешност</th>
+                <th>Бележки</th>
+                <th>История на ремонти</th>
+            </tr>
+        </thead>
+        <tbody id="repairTableBody">
+            <!-- Данни ще се зареждат тук -->
+        </tbody>
+    </table>
+
+    <!-- Чат в реално време -->
+    <div id="chat-container">
+        <div id="chat-header">Чат</div>
+        <div id="chat-messages"></div>
+        <div id="chat-input-container">
+            <input type="text" id="chat-input" placeholder="Напиши съобщение..." />
+            <button id="chat-send-btn">Изпрати</button>
+        </div>
+    </div>
+
+    <script>
+        // Примерни данни - после ще се зареждат от база данни
+        const repairs = [
+            {
+                id: 1,
+                matrix: "Матрица A1",
+                description: "Смяна на уплътнения",
+                date: "2025-05-10",
+                repairCount: 5,
+                failureFrequency: "Месечна",
+                status: "В процес",
+                deadline: "2025-05-19",
+                phone: "+359888123456",
+                smsStatus: "Изпратено",
+                urgencyColor: "червен",
+                notes: "Приоритетно",
+                history: "Ремонт 1, Ремонт 2, Ремонт 3"
+            },
+            {
+                id: 2,
+                matrix: "Матрица B3",
+                description: "Подмяна на клапан",
+                date: "2025-04-28",
+                repairCount: 2,
+                failureFrequency: "Тримесечна",
+                status: "Завършен",
+                deadline: "2025-05-05",
+                phone: "+359877654321",
+                smsStatus: "Не е изпратено",
+                urgencyColor: "жълт",
+                notes: "",
+                history: "Ремонт 1, Ремонт 2"
+            }
+        ];
+
+        // Зареждане на таблицата
+        const tbody = document.getElementById('repairTableBody');
+        function loadTable() {
+            tbody.innerHTML = "";
+            repairs.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${r.id}</td>
+                    <td>${r.matrix}</td>
+                    <td>${r.description}</td>
+                    <td>${r.date}</td>
+                    <td>${r.repairCount}</td>
+                    <td>${r.failureFrequency}</td>
+                    <td>${r.status}</td>
+                    <td>${r.deadline}</td>
+                    <td>${r.phone}</td>
+                    <td>${r.smsStatus}</td>
+                    <td style="color:${r.urgencyColor}; font-weight:bold;">${r.urgencyColor}</td>
+                    <td>${r.notes}</td>
+                    <td>${r.history}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        loadTable();
+
+        // Чат функционалност (само фронтенд)
+        const chatHeader = document.getElementById('chat-header');
+        const chatContainer = document.getElementById('chat-container');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const chatSendBtn = document.getElementById('chat-send-btn');
+
+        chatHeader.addEventListener('click', () => {
+            if (chatMessages.style.display === 'none') {
+                chatMessages.style.display = 'block';
+                chatInput.parentElement.style.display = 'flex';
+            } else {
+                chatMessages.style.display = 'none';
+                chatInput.parentElement.style.display = 'none';
+            }
+        });
+
+        chatSendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', e => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        function sendMessage() {
+            const msg = chatInput.value.trim();
+            if (msg === '') return;
+            const messageElement = document.createElement('div');
+            messageElement.textContent = `Ти: ${msg}`;
+            messageElement.style.padding = '5px 0';
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            chatInput.value = '';
+            // Тук може да се добави логика за изпращане на съобщения към сървър (WebSocket/Firebase)
+        }
+    </script>
+</body>
+</html>
