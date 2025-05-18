@@ -1,1 +1,10 @@
-/* CSS за технически стил */
+body { font-family: Arial; background: #eef0f4; margin: 0; padding: 20px; }
+h1, h2 { color: #2c3e50; }
+form { margin-bottom: 20px; }
+input { padding: 8px; margin: 5px; }
+button { padding: 8px 16px; margin: 5px; background: #007BFF; color: white; border: none; cursor: pointer; }
+table { width: 100%; border-collapse: collapse; background: white; }
+th { background: #007BFF; color: white; }
+td, th { border: 1px solid #ccc; padding: 10px; text-align: left; }
+.login { max-width: 300px; margin: 50px auto; padding: 20px; background: white; border: 1px solid #ccc; }
+.error { color: red; margin-top: 10px; }

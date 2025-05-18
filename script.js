@@ -1,3 +1,16 @@
+const users = [{ username: "admin", password: "1234" }, { username: "user", password: "1111" }];
+function login() {
+  const u = document.getElementById("username").value;
+  const p = document.getElementById("password").value;
+  const match = users.find(x => x.username === u && x.password === p);
+  if (match) {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("mainApp").style.display = "block";
+  } else {
+    document.getElementById("loginError").textContent = "Грешен потребител или парола.";
+  }
+}
+
 const form = document.getElementById('offerForm');
 const table = document.getElementById('offersTable').querySelector('tbody');
 
@@ -30,7 +43,7 @@ function aiRisk(deadline) {
 }
 
 function aiSuggest() {
-  document.getElementById('price').value = "950";
+  document.getElementById('price').value = "980";
   const d = new Date();
   d.setDate(d.getDate() + 6);
   document.getElementById('deadline').value = d.toISOString().split('T')[0];
