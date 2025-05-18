@@ -7,30 +7,40 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Таблица за оферти и ремонти</h1>
-  <form id="offerForm">
-    <input type="text" placeholder="Проект №" id="project" required>
-    <input type="text" placeholder="Клиент" id="client" required>
-    <input type="text" placeholder="Описание" id="description" required>
-    <input type="date" id="deadline" required>
-    <input type="number" placeholder="Цена" id="price" required>
-    <button type="submit">Добави</button>
-    <button type="button" onclick="generateAI()">AI предложение</button>
-  </form>
-  <table id="offersTable">
-    <thead>
-      <tr><th>Проект</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th><th>AI Риск</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <div id="chatBox">
-    <h4>Чат</h4>
-    <div id="chatMessages"></div>
-    <input id="chatInput" type="text" placeholder="Пиши съобщение..."/>
-    <button onclick="sendMessage()">Изпрати</button>
+  <div class="container">
+    <nav class="sidebar">
+      <h2>Готова платформа<br>за оферти и ремонти</h2>
+      <ul>
+        <li>Начало</li>
+        <li>Оферти и ремонти</li>
+        <li>Заявки</li>
+        <li>Предложения от AI</li>
+        <li>Склад</li>
+        <li>Отчети</li>
+        <li>Клиенти</li>
+        <li>Управление на AI</li>
+        <li>Потребители</li>
+        <li>База данни</li>
+        <li><a href="/logout" style="color:white">Изход</a></li>
+      </ul>
+    </nav>
+    <main class="main-content">
+      <h1>Готова платформа за оферти и ремонти</h1>
+      <table>
+        <thead>
+          <tr><th>Проект №</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th><th>Телефон</th><th>Статус</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>CI-001</td><td>ABC Ltd</td><td>Ремонт на матрица X</td><td>2023-06-01</td><td>1200 лв</td><td>0888123456</td><td>В процес</td></tr>
+        </tbody>
+      </table>
+      <div class="widgets">
+        <div class="widget">Чат в реално време</div>
+        <div class="widget">Прогноза за сметката</div>
+        <div class="widget">История на матрицата X</div>
+        <div class="widget">Настройки на AI</div>
+      </div>
+    </main>
   </div>
-
-  <script src="script.js"></script>
 </body>
 </html>
