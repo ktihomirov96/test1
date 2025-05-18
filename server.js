@@ -1,42 +1,37 @@
 
 const express = require('express');
-const session = require('express-session');
-const path = require('path');
+const bodyParser = require('body-parser');
+const fetch = require('node-fetch');
 const app = express();
+const port = 3000;
 
-app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
-app.use(session({
-  secret: 'repair_secret_123',
-  resave: false,
-  saveUninitialized: true
-}));
+app.use(bodyParser.json());
 
-function protectedRoute(file) {
-  return function (req, res) {
-    if (req.session.loggedIn) {
-      res.sendFile(path.join(__dirname, file));
-    } else {
-      res.redirect('/login');
-    }
-  };
-}
+app.post('/api/chat', async (req, res) => {
+  const userMessage = req.body.message;
 
-app.get('/', protectedRoute('index.html'));
-app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  if (username === 'admin' && password === '1234') {
-    req.session.loggedIn = true;
-    res.redirect('/');
-  } else {
-    res.send('Грешен вход. <a href="/login">Опитай отново</a>');
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer sk-ВЪВЕДИ_ТУК_ТВОЯ_КЛЮЧ"
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: userMessage }],
+        max_tokens: 200
+      })
+    });
+
+    const data = await response.json();
+    res.json({ reply: data.choices[0].message.content });
+  } catch (err) {
+    res.status(500).json({ reply: "Грешка при свързване с OpenAI." });
   }
 });
-app.get('/logout', (req, res) => req.session.destroy(() => res.redirect('/login')));
-app.get('/clients', protectedRoute('clients.html'));
-app.get('/warehouse', protectedRoute('warehouse.html'));
-app.get('/ai', protectedRoute('ai.html'));
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log('Работи на порт ' + port));
+app.listen(port, () => {
+  console.log(`Сървърът работи на http://localhost:${port}`);
+});

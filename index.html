@@ -2,45 +2,126 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-  <meta charset="UTF-8">
-  <title>Таблица за ремонти</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Проследимост на оферти + AI</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    table, th, td { border: 1px solid #ccc; border-collapse: collapse; padding: 8px; }
+    th { background-color: #f0f0f0; }
+    input { margin-bottom: 10px; padding: 4px; }
+    .chatbot {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 300px;
+      background: #f5f5f5;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+    }
+    .chatbot-header {
+      background: #2e3b4e;
+      color: white;
+      padding: 10px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+    .chatbot-body {
+      padding: 10px;
+      height: 200px;
+      overflow-y: auto;
+      background: white;
+    }
+    .chatbot-input {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ccc;
+    }
+    .chatbot-input input {
+      flex: 1;
+      padding: 6px;
+    }
+    .chatbot-input button {
+      padding: 6px 12px;
+      margin-left: 5px;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <nav class="sidebar">
-      <h2>Готова платформа<br>за оферти и ремонти</h2>
-      <ul>
-        <li>Начало</li>
-        <li>Оферти и ремонти</li>
-        <li>Заявки</li>
-        <li>Предложения от AI</li>
-        <li>Склад</li>
-        <li>Отчети</li>
-        <li>Клиенти</li>
-        <li>Управление на AI</li>
-        <li>Потребители</li>
-        <li>База данни</li>
-        <li><a href="/logout" style="color:white">Изход</a></li>
-      </ul>
-    </nav>
-    <main class="main-content">
-      <h1>Готова платформа за оферти и ремонти</h1>
-      <table>
-        <thead>
-          <tr><th>Проект №</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th><th>Телефон</th><th>Статус</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>CI-001</td><td>ABC Ltd</td><td>Ремонт на матрица X</td><td>2023-06-01</td><td>1200 лв</td><td>0888123456</td><td>В процес</td></tr>
-        </tbody>
-      </table>
-      <div class="widgets">
-        <div class="widget">Чат в реално време</div>
-        <div class="widget">Прогноза за сметката</div>
-        <div class="widget">История на матрицата X</div>
-        <div class="widget">Настройки на AI</div>
-      </div>
-    </main>
+  <h2>Проследимост на оферти</h2>
+
+  <form id="offer-form">
+    <input type="text" id="project" placeholder="Проект №" required />
+    <input type="text" id="client" placeholder="Клиент" required />
+    <input type="number" id="amount" placeholder="Сума" required />
+    <input type="date" id="deadline" placeholder="Срок" required />
+    <button type="submit">Добави оферта</button>
+  </form>
+
+  <table id="offers-table">
+    <thead>
+      <tr>
+        <th>Проект №</th><th>Клиент</th><th>Сума</th><th>Срок</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="chatbot">
+    <div class="chatbot-header">AI Помощник</div>
+    <div class="chatbot-body" id="chat-log">
+      <div><b>Бот:</b> Здравей! С какво мога да помогна?</div>
+    </div>
+    <div class="chatbot-input">
+      <input type="text" id="user-input" placeholder="Питай нещо..." />
+      <button onclick="sendMessage()">Изпрати</button>
+    </div>
   </div>
+
+  <script>
+    const form = document.getElementById('offer-form');
+    const table = document.querySelector('#offers-table tbody');
+    const offers = [];
+
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      const project = document.getElementById('project').value;
+      const client = document.getElementById('client').value;
+      const amount = document.getElementById('amount').value;
+      const deadline = document.getElementById('deadline').value;
+      offers.push({ project, client, amount, deadline });
+
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${project}</td><td>${client}</td><td>${amount}</td><td>${deadline}</td>`;
+      table.appendChild(row);
+
+      form.reset();
+    };
+
+    async function sendMessage() {
+      const input = document.getElementById('user-input');
+      const log = document.getElementById('chat-log');
+      const message = input.value.trim();
+      if (!message) return;
+
+      log.innerHTML += `<div><b>Ти:</b> ${message}</div>`;
+      input.value = "";
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message })
+        });
+        const data = await res.json();
+        log.innerHTML += `<div><b>Бот:</b> ${data.reply}</div>`;
+        log.scrollTop = log.scrollHeight;
+      } catch {
+        log.innerHTML += `<div><b>Бот:</b> Грешка при AI връзката.</div>`;
+      }
+    }
+  </script>
 </body>
 </html>
