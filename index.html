@@ -1,8 +1,22 @@
 <!DOCTYPE html>
 <html lang="bg">
-<head><meta charset="UTF-8"><title>Платформа</title></head>
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Таблица за оферти</title>
+  <script defer src="script.js"></script>
+</head>
 <body>
-<h1>Готова платформа за оферти и ремонти</h1>
-<p>Работи с Node.js и Render</p>
+  <h1>Платформа за оферти и ремонти</h1>
+  <form id="offerForm">
+    <input id="project" placeholder="Проект №" required />
+    <input id="client" placeholder="Клиент" required />
+    <input id="description" placeholder="Описание" required />
+    <input id="deadline" type="date" required />
+    <input id="price" placeholder="Цена" required />
+    <button type="submit">Добави</button>
+    <button type="button" onclick="aiSuggest()">AI предложение</button>
+  </form>
+  <table border="1" id="offersTable"><thead><tr>
+    <th>Проект</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th><th>AI Риск</th></tr></thead><tbody></tbody></table>
 </body>
 </html>
