@@ -29,5 +29,12 @@
     <table border="1" id="offersTable"><thead><tr>
       <th>Проект</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th><th>AI Риск</th></tr></thead><tbody></tbody></table>
   </div>
+
+<div id="chatBox" style="position:fixed;bottom:10px;right:10px;width:300px;background:#fff;border:1px solid #ccc;border-radius:8px;padding:10px;box-shadow:0 0 10px rgba(0,0,0,0.1);">
+  <h4>Чат</h4>
+  <div id="chatMessages" style="height:150px;overflow-y:auto;background:#f9f9f9;padding:5px;border:1px solid #ddd;margin-bottom:5px;"></div>
+  <input type="text" id="chatInput" placeholder="Пишете съобщение..." style="width:80%;padding:5px;" />
+  <button onclick="sendMessage()" style="padding:5px;">Изпрати</button>
+</div>
 </body>
 </html>

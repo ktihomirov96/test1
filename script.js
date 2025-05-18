@@ -48,3 +48,17 @@ function aiSuggest() {
   d.setDate(d.getDate() + 6);
   document.getElementById('deadline').value = d.toISOString().split('T')[0];
 }
+
+
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  const box = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.textContent = msg;
+  div.style.margin = '5px 0';
+  box.appendChild(div);
+  input.value = '';
+  box.scrollTop = box.scrollHeight;
+}
