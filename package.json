@@ -1,1 +1,12 @@
-{ "name": "enhanced-platform", "main": "server.js", "scripts": { "start": "node server.js" } }
+
+{
+  "name": "final-full-platform",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

@@ -1,1 +1,36 @@
-<!-- Финален HTML с вход, таблица, AI и чат интерфейс -->
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <title>Таблица за ремонти</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Таблица за оферти и ремонти</h1>
+  <form id="offerForm">
+    <input type="text" placeholder="Проект №" id="project" required>
+    <input type="text" placeholder="Клиент" id="client" required>
+    <input type="text" placeholder="Описание" id="description" required>
+    <input type="date" id="deadline" required>
+    <input type="number" placeholder="Цена" id="price" required>
+    <button type="submit">Добави</button>
+    <button type="button" onclick="generateAI()">AI предложение</button>
+  </form>
+  <table id="offersTable">
+    <thead>
+      <tr><th>Проект</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th><th>AI Риск</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div id="chatBox">
+    <h4>Чат</h4>
+    <div id="chatMessages"></div>
+    <input id="chatInput" type="text" placeholder="Пиши съобщение..."/>
+    <button onclick="sendMessage()">Изпрати</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
