@@ -1,14 +1,1 @@
-{
-  "name": "ai-offer-platform",
-  "version": "1.0.0",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "engines": {
-    "node": "18.x"
-  },
-  "dependencies": {
-    "express": "^4.18.2"
-  }
-}
+{ "name": "full-platform", "main": "server.js", "scripts": { "start": "node server.js" } }
