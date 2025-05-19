@@ -1,33 +1,19 @@
-
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Платформа за оферти и ремонти</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="container">
-  <nav class="sidebar">
-    <ul>
-      <li><a href="#" onclick="loadView('offers')">Оферти</a></li>
-      <li><a href="#" onclick="loadView('requests')">Заявки</a></li>
-      <li><a href="#" onclick="loadView('users')">Потребители</a></li>
-    </ul>
+  <nav>
+    <a href="index.html">Начало</a>
+    <a href="offers.html">Оферти</a>
+    <a href="requests.html">Заявки</a>
   </nav>
-  <main id="content">
-    <h1>Добре дошли</h1>
-    <p>Изберете секция от менюто вляво.</p>
+  <main>
+    <h1>Добре дошли в платформата</h1>
   </main>
-</div>
-<script>
-function loadView(view) {
-  fetch(`views/${view}.html`)
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById('content').innerHTML = html;
-    });
-}
-</script>
 </body>
 </html>
