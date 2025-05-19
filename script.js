@@ -1,61 +1,53 @@
 
 function login() {
-  const u = document.getElementById('username').value;
-  const p = document.getElementById('password').value;
-  if (u === "admin" && p === "1234") {
-    document.getElementById("login-screen").style.display = "none";
-    document.getElementById("main-content").style.display = "flex";
+  const user = document.getElementById('username').value;
+  const pass = document.getElementById('password').value;
+  if (user === 'admin' && pass === '1234') {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'flex';
   } else {
-    alert("Грешен вход!");
+    alert('Грешни данни!');
   }
 }
+
 function showSection(id) {
-  document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
-  document.getElementById(id).style.display = 'block';
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
-document.getElementById("offerForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-  const pid = document.getElementById("projectId").value;
-  const client = document.getElementById("client").value;
-  const desc = document.getElementById("description").value;
-  const matrix = document.getElementById("matrixId").value;
-  const deadline = document.getElementById("deadline").value;
-  const price = document.getElementById("price").value;
-  const urgency = document.getElementById("urgency").value;
 
-  const row = document.createElement("tr");
-  row.className = urgency;
-  row.innerHTML = `<td>${pid}</td><td>${client}</td><td>${desc}</td><td>${matrix}</td><td>${deadline}</td><td>${price}</td><td>${urgency}</td>`;
-  document.getElementById("offersTable").appendChild(row);
+function addOffer() {
+  const t = document.querySelector('#offersTable tbody');
+  const row = t.insertRow();
+  row.insertCell().innerText = document.getElementById('proj').value;
+  row.insertCell().innerText = document.getElementById('cl').value;
+  row.insertCell().innerText = document.getElementById('desc').value;
+  row.insertCell().innerText = document.getElementById('deadline').value;
+  row.insertCell().innerText = document.getElementById('price').value;
+  const urgency = document.getElementById('urgency').value;
+  const urgencyCell = row.insertCell();
+  urgencyCell.innerText = urgency;
+  urgencyCell.style.background = urgency === 'High' ? '#f88' : urgency === 'Medium' ? '#fc3' : '#8f8';
+}
 
-  const history = document.createElement("div");
-  history.innerText = `Матрица ${matrix} е ремонтирана.`;
-  document.getElementById("repairHistory").appendChild(history);
-});
+function sendChat(e) {
+  if (e.key === 'Enter') {
+    const msg = document.getElementById('chatInput').value;
+    document.getElementById('chatBox').innerHTML += '<div>' + msg + '</div>';
+    document.getElementById('chatInput').value = '';
+  }
+}
+
+function addStock() {
+  const m = document.getElementById('mat').value;
+  const d = document.getElementById('det').value;
+  const q = document.getElementById('qty').value;
+  document.getElementById('stockList').innerHTML += `<li>${m} - ${d} : ${q} бр.</li>`;
+}
 
 function searchOffers() {
-  const filter = document.getElementById("searchClient").value.toLowerCase();
-  const rows = document.querySelectorAll("#offersTable tr");
-  for (let i = 1; i < rows.length; i++) {
-    const txt = rows[i].children[1].textContent.toLowerCase();
-    rows[i].style.display = txt.includes(filter) ? "" : "none";
-  }
-}
-function sendMessage() {
-  const input = document.getElementById("chatInput");
-  const msg = input.value;
-  if (msg.trim()) {
-    const chat = document.getElementById("chatWindow");
-    const p = document.createElement("p");
-    p.textContent = "Вие: " + msg;
-    chat.appendChild(p);
-    input.value = "";
-  }
-}
-function addWarehouse() {
-  const id = document.getElementById("matrixSearch").value;
-  const detail = document.getElementById("matrixDetail").value;
-  const qty = document.getElementById("matrixQuantity").value;
-  const div = document.getElementById("warehouseData");
-  div.innerHTML += `<p>${id} – ${detail} – ${qty} бр</p>`;
+  const keyword = document.getElementById('clientSearch').value.toLowerCase();
+  document.querySelectorAll('#offersTable tbody tr').forEach(row => {
+    const client = row.cells[1].innerText.toLowerCase();
+    row.style.display = client.includes(keyword) ? '' : 'none';
+  });
 }

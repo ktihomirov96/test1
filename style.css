@@ -1,8 +1,14 @@
-body { margin: 0; font-family: sans-serif; background: #f6f6f6; }
-.sidebar { width: 240px; background: #1e2a38; height: 100vh; color: white; position: fixed; padding: 20px; }
-.sidebar h2 { font-size: 20px; }
-.sidebar ul { list-style: none; padding: 0; }
-.sidebar li { margin: 20px 0; }
-.sidebar a { color: white; text-decoration: none; }
-.main { margin-left: 260px; padding: 20px; }
-form input, form select { margin: 4px; padding: 6px; }
+
+body { margin: 0; font-family: Arial; background: #f4f4f4; }
+.login-screen { text-align: center; padding: 100px; }
+aside { width: 200px; background: #1e2b37; color: white; float: left; height: 100vh; padding-top: 20px; }
+aside h2 { text-align: center; }
+aside ul { list-style: none; padding: 0; }
+aside li { padding: 10px; cursor: pointer; }
+aside li:hover { background: #2a3e50; }
+.main-content { display: flex; }
+section { padding: 20px; flex: 1; display: none; }
+section.active { display: block; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { border: 1px solid #ccc; padding: 5px; }
+.online { width: 10px; height: 10px; background: green; border-radius: 50%; display: inline-block; }
