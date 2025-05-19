@@ -1,14 +1,16 @@
 
-body { margin: 0; font-family: Arial; background: #f4f4f4; }
-.login-screen { text-align: center; padding: 100px; }
-aside { width: 200px; background: #1e2b37; color: white; float: left; height: 100vh; padding-top: 20px; }
-aside h2 { text-align: center; }
-aside ul { list-style: none; padding: 0; }
-aside li { padding: 10px; cursor: pointer; }
-aside li:hover { background: #2a3e50; }
-.main-content { display: flex; }
-section { padding: 20px; flex: 1; display: none; }
-section.active { display: block; }
-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-th, td { border: 1px solid #ccc; padding: 5px; }
-.online { width: 10px; height: 10px; background: green; border-radius: 50%; display: inline-block; }
+body { font-family: Arial; margin: 0; }
+#login-screen { padding: 2em; text-align: center; }
+#app { display: flex; }
+aside { width: 200px; background: #1c2b3a; color: white; padding: 1em; height: 100vh; }
+aside .logo { font-size: 20px; margin-bottom: 1em; font-weight: bold; }
+nav a { display: block; color: white; margin: 10px 0; text-decoration: none; }
+main { flex: 1; padding: 2em; }
+form input, form select { margin: 5px; padding: 5px; }
+table { width: 100%; margin-top: 1em; border-collapse: collapse; }
+th, td { padding: 8px; border: 1px solid #ccc; }
+.висока { background: #f88; }
+.средна { background: #ffa; }
+.ниска { background: #afa; }
+.section { display: none; }
+.section.active { display: block; }

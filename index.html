@@ -1,49 +1,11 @@
+
 <!DOCTYPE html>
-<html lang="bg">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Платформа за оферти и ремонти</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Платформа</title>
 </head>
 <body>
-  <div class="login-screen" id="loginScreen">
-    <h2>Вход</h2>
-    <input type="text" id="username" placeholder="Потребителско име">
-    <input type="password" id="password" placeholder="Парола">
-    <button onclick="login()">Вход</button>
-  </div>
-
-  <div class="main-content" id="mainContent" style="display:none;">
-    <aside>
-      <h2>Технически изделия</h2>
-      <ul>
-        <li onclick="showSection('offers')">Оферти</li>
-        <li onclick="showSection('chat')">Чат</li>
-        <li onclick="showSection('stock')">Склад</li>
-        <li onclick="showSection('users')">Потребители</li>
-      </ul>
-    </aside>
-    <section id="offers" class="section active">
-      <h1>Оферти</h1>
-      <input type="text" id="clientSearch" placeholder="Търси клиент..." oninput="searchOffers()">
-      <table id="offersTable">
-        <thead>
-          <tr><th>Проект</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th><th>Спешност</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <input type="text" id="proj" placeholder="Проект">
-      <input type="text" id="cl" placeholder="Клиент">
-      <input type="text" id="desc" placeholder="Описание">
-      <input type="date" id="deadline">
-      <input type="number" id="price" placeholder="Цена">
-      <select id="urgency"><option>Low</option><option>Medium</option><option>High</option></select>
-      <button onclick="addOffer()">Добави</button>
-    </section>
-    <section id="chat" class="section"><h1>Чат</h1><div id="chatBox"></div><input id="chatInput" placeholder="Пиши..." onkeypress="sendChat(event)"></section>
-    <section id="stock" class="section"><h1>Склад</h1><input id="mat" placeholder="Матрица"><input id="det" placeholder="Детайл"><input id="qty"><button onclick="addStock()">Добави</button><ul id="stockList"></ul></section>
-    <section id="users" class="section"><h1>Потребители на линия</h1><ul><li>admin <span class="online"></span></li></ul></section>
-  </div>
-  <script src="script.js"></script>
+    <h1>Готова платформа за оферти и ремонти</h1>
 </body>
 </html>
