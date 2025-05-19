@@ -1,1 +1,50 @@
-<!DOCTYPE html><html><head><title>Платформа</title></head><body><h1>Добре дошли</h1></body></html>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Оферти</title>
+</head>
+<body>
+    <h2>Добави оферта</h2>
+    <form id="offerForm">
+        <input name="project" placeholder="Проект"><br>
+        <input name="client" placeholder="Клиент"><br>
+        <input name="description" placeholder="Описание"><br>
+        <input name="deadline" placeholder="Срок"><br>
+        <input name="price" placeholder="Цена"><br>
+        <button type="submit">Добави</button>
+    </form>
+
+    <h3>Всички оферти:</h3>
+    <ul id="offersList"></ul>
+
+    <script>
+    async function loadOffers() {
+        const res = await fetch('/api/offers');
+        const offers = await res.json();
+        const list = document.getElementById('offersList');
+        list.innerHTML = '';
+        offers.forEach(o => {
+            const li = document.createElement('li');
+            li.textContent = `${o.project} - ${o.client} - ${o.description} - ${o.deadline} - ${o.price}`;
+            list.appendChild(li);
+        });
+    }
+
+    document.getElementById('offerForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(e.target).entries());
+        await fetch('/api/offers', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        e.target.reset();
+        loadOffers();
+    };
+
+    loadOffers();
+    </script>
+</body>
+</html>
