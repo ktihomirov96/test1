@@ -1,55 +1,49 @@
-
-const express = require('express');
-const path = require('path');
-const sqlite3 = require('sqlite3').verbose();
-const bodyParser = require('body-parser');
-
+const express = require("express");
+const path = require("path");
+const bodyParser = require("body-parser");
+const sqlite3 = require("sqlite3").verbose();
+const session = require("express-session");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// SQLite DB в /tmp
-const dbPath = path.join('/tmp', 'database.sqlite');
-const db = new sqlite3.Database(dbPath);
-
-// Създаване на таблица ако не съществува
-db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS offers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        project TEXT,
-        client TEXT,
-        description TEXT,
-        deadline TEXT,
-        price TEXT
-    )`);
-});
+const db = new sqlite3.Database("./db/database.db");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.static("public"));
+app.use(session({ secret: "secure123", resave: false, saveUninitialized: true }));
 
-// API за получаване на оферти
-app.get('/api/offers', (req, res) => {
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "views", "login.html")));
+
+app.post("/login", (req, res) => {
+    const { username, password } = req.body;
+    if (username === "admin" && password === "1234") {
+        req.session.user = "admin";
+        res.redirect("/dashboard");
+    } else {
+        res.send("Грешни данни");
+    }
+});
+
+app.get("/dashboard", (req, res) => {
+    if (req.session.user === "admin") {
+        res.sendFile(path.join(__dirname, "views", "dashboard.html"));
+    } else {
+        res.redirect("/");
+    }
+});
+
+app.post("/add-offer", (req, res) => {
+    const { project, client, deadline, price } = req.body;
+    db.run("INSERT INTO offers (project, client, deadline, price) VALUES (?, ?, ?, ?)", [project, client, deadline, price]);
+    res.redirect("/dashboard");
+});
+
+app.get("/offers", (req, res) => {
     db.all("SELECT * FROM offers", [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(rows);
     });
 });
 
-// API за добавяне на оферта
-app.post('/api/offers', (req, res) => {
-    const { project, client, description, deadline, price } = req.body;
-    db.run("INSERT INTO offers (project, client, description, deadline, price) VALUES (?, ?, ?, ?, ?)",
-        [project, client, description, deadline, price],
-        function(err) {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json({ id: this.lastID });
-        });
-});
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-app.listen(PORT, () => {
-    console.log(`Сървърът работи на порт ${PORT}`);
-});
+app.listen(PORT, () => console.log("Сървърът работи на порт " + PORT));

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="bg"><head><meta charset="UTF-8"><title>Табло</title></head>
+<body>
+<h2>Добре дошъл!</h2>
+<form action="/add-offer" method="POST">
+<input name="project" placeholder="Проект">
+<input name="client" placeholder="Клиент">
+<input name="deadline" placeholder="Срок">
+<input name="price" placeholder="Цена">
+<button type="submit">Добави оферта</button>
+</form>
+<hr>
+<h3>Оферти</h3>
+<ul id="list"></ul>
+<script>
+fetch('/offers').then(res => res.json()).then(data => {
+  const list = document.getElementById('list');
+  data.forEach(o => {
+    const li = document.createElement('li');
+    li.textContent = `${o.project} - ${o.client} - ${o.deadline} - ${o.price} лв.`;
+    list.appendChild(li);
+  });
+});
+</script>
+</body></html>
