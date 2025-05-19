@@ -1,1 +1,33 @@
-<!DOCTYPE html><html lang='bg'><head><meta charset='UTF-8'><title>Оферти</title><link rel='stylesheet' href='style.css'></head><body><div class='container'><nav class='sidebar'><ul><li><a href='/'>Оферти</a></li><li><a href='/requests'>Заявки</a></li><li><a href='/users'>Потребители</a></li><li><a href='/logs'>Логове</a></li><li><a href='/clients'>Клиенти</a></li><li><a href='/ai'>AI</a></li><li><a href='/warehouse'>Склад</a></li><li><a href='/logout'>Изход</a></li></ul></nav><main><h1>Форма за нова оферта</h1><form><input placeholder='Проект №'><input placeholder='Клиент'><input placeholder='Описание'><input type='date'><input placeholder='Цена'><button>AI предложение</button><button>Добави</button></form></main></div></body></html>
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <title>Оферти и ремонти</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <nav class="sidebar">
+    <ul>
+      <li><a href="#" onclick="loadView('home')">Оферти</a></li>
+      <li><a href="#" onclick="loadView('requests')">Заявки</a></li>
+      <li><a href="#" onclick="loadView('users')">Потребители</a></li>
+    </ul>
+  </nav>
+  <main id="content">
+    <h1>Добре дошли</h1>
+    <p>Изберете секция от менюто.</p>
+  </main>
+</div>
+<script>
+function loadView(view) {
+  fetch(`views/${view}.html`)
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById('content').innerHTML = html;
+    });
+}
+</script>
+</body>
+</html>
