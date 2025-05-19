@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-  <meta charset="UTF-8">
-  <title>Платформа - Демо</title>
-  <link rel="stylesheet" href="public/css/style.css">
+    <meta charset="UTF-8">
+    <title>Оферти и ремонти</title>
 </head>
 <body>
-  <nav>
-    <a href="/views/offers.html">Оферти</a> |
-    <a href="/views/requests.html">Заявки</a> |
-    <a href="/views/users.html">Потребители</a>
-  </nav>
-  <main>
-    <h1>Добре дошли в демо платформата</h1>
-    <p>Това е визуален преглед на активните секции.</p>
-  </main>
+    <h1>Работеща платформа с база</h1>
+    <form action="/add" method="post">
+        <input name="project" placeholder="Проект №">
+        <input name="client" placeholder="Клиент">
+        <button type="submit">Добави</button>
+    </form>
 </body>
 </html>
