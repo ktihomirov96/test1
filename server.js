@@ -1,35 +1,51 @@
+
 const express = require('express');
+const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
-const bodyParser = require('body-parser');
 const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 
-// База в /tmp за съвместимост с Render
-const dbPath = '/tmp/database.db';
-const db = new sqlite3.Database(dbPath);
+app.use(cors());
+app.use(express.json());
+app.use(express.static(__dirname));
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('.'));
+const db = new sqlite3.Database('./data.db');
 
 db.serialize(() => {
-    db.run("CREATE TABLE IF NOT EXISTS offers (id INTEGER PRIMARY KEY, project TEXT, client TEXT)");
+  db.run(`CREATE TABLE IF NOT EXISTS offers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    projectId TEXT,
+    client TEXT,
+    matrixId TEXT,
+    description TEXT,
+    deadline TEXT,
+    price INTEGER,
+    urgency TEXT
+  )`);
+});
+
+app.get('/offers', (req, res) => {
+  db.all("SELECT * FROM offers", [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json(rows);
+  });
+});
+
+app.post('/offers', (req, res) => {
+  const { projectId, client, matrixId, description, deadline, price, urgency } = req.body;
+  db.run(`INSERT INTO offers (projectId, client, matrixId, description, deadline, price, urgency)
+          VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [projectId, client, matrixId, description, deadline, price, urgency],
+    function(err) {
+      if (err) return res.status(500).json({ error: err });
+      res.json({ success: true, id: this.lastID });
+    }
+  );
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.post('/add', (req, res) => {
-    const { project, client } = req.body;
-    db.run("INSERT INTO offers (project, client) VALUES (?, ?)", [project, client], (err) => {
-        if (err) {
-            return res.send("Грешка при добавяне");
-        }
-        res.redirect('/');
-    });
-});
-
-app.listen(PORT, () => {
-    console.log("Сървърът работи на порт " + PORT);
-});
+app.listen(port, () => console.log(`Сървърът стартира на порт ${port}`));

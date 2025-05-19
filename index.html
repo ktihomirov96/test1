@@ -1,15 +1,75 @@
+
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-    <meta charset="UTF-8">
-    <title>Оферти и ремонти</title>
+  <meta charset="UTF-8">
+  <title>Технически изделия</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="app.js"></script>
 </head>
 <body>
-    <h1>Работеща платформа с база</h1>
-    <form action="/add" method="post">
-        <input name="project" placeholder="Проект №">
-        <input name="client" placeholder="Клиент">
-        <button type="submit">Добави</button>
-    </form>
+  <div id="login-screen">
+    <h2>Вход</h2>
+    <input type="text" id="username" placeholder="Потребител">
+    <input type="password" id="password" placeholder="Парола">
+    <button onclick="login()">Вход</button>
+  </div>
+
+  <div id="app" style="display:none;">
+    <aside>
+      <h2>Технически изделия</h2>
+      <ul>
+        <li onclick="showSection('offers')">Оферти</li>
+        <li onclick="showSection('chat')">Чат</li>
+        <li onclick="showSection('users')">Потребители</li>
+      </ul>
+    </aside>
+
+    <main>
+      <section id="offers">
+        <h2>Оферти</h2>
+        <form id="offerForm">
+          <input id="projectId" placeholder="Проект №">
+          <input id="client" placeholder="Клиент">
+          <input id="matrixId" placeholder="Матрица №">
+          <input id="description" placeholder="Описание">
+          <input type="date" id="deadline">
+          <input type="number" id="price" placeholder="Цена">
+          <select id="urgency">
+            <option value="low">Слаба</option>
+            <option value="medium">Средна</option>
+            <option value="high">Висока</option>
+          </select>
+          <button type="submit">Добави</button>
+          <button type="button" onclick="aiSuggest()">AI</button>
+        </form>
+        <input id="searchMatrix" placeholder="Търси по матрица" onkeyup="searchMatrix()">
+        <input id="searchClient" placeholder="Търси по клиент" onkeyup="searchClient()">
+        <table>
+          <thead>
+            <tr><th>Проект</th><th>Клиент</th><th>Матрица</th><th>Описание</th><th>Срок</th><th>Цена</th><th>Спешност</th></tr>
+          </thead>
+          <tbody id="offersBody"></tbody>
+        </table>
+        <h3>История на ремонти</h3>
+        <div id="repairHistory"></div>
+      </section>
+
+      <section id="chat" class="hidden">
+        <h2>Чат</h2>
+        <div id="chatBox"></div>
+        <input id="chatInput" placeholder="Съобщение...">
+        <button onclick="sendMessage()">Изпрати</button>
+      </section>
+
+      <section id="users" class="hidden">
+        <h2>Потребители на линия</h2>
+        <ul>
+          <li>admin <span class="online-dot"></span></li>
+          <li>operator <span class="online-dot"></span></li>
+        </ul>
+      </section>
+    </main>
+  </div>
 </body>
 </html>
