@@ -1,0 +1,28 @@
+
+<h2>Добавяне на оферта</h2>
+<form id="offerForm">
+  <input type="text" placeholder="Проект №" id="project"><br>
+  <input type="text" placeholder="Клиент" id="client"><br>
+  <input type="text" placeholder="Описание" id="description"><br>
+  <input type="date" id="deadline"><br>
+  <input type="number" placeholder="Цена" id="price"><br>
+  <button type="submit">Добави</button>
+</form>
+<h3>Въведени оферти:</h3>
+<table border="1" id="offersTable">
+  <tr><th>Проект №</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th></tr>
+</table>
+<script>
+document.getElementById('offerForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const row = document.createElement('tr');
+  row.innerHTML = `
+    <td>${project.value}</td>
+    <td>${client.value}</td>
+    <td>${description.value}</td>
+    <td>${deadline.value}</td>
+    <td>${price.value} лв</td>`;
+  document.getElementById('offersTable').appendChild(row);
+  this.reset();
+});
+</script>
