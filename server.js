@@ -1,48 +1,30 @@
-
 const express = require('express');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
-const bodyParser = require('body-parser');
-
+const session = require('express-session');
 const app = express();
-const db = new sqlite3.Database('./offers.db');
+const PORT = process.env.PORT || 3000;
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(express.static(__dirname));
+const db = new sqlite3.Database('./db/database.db');
 
-// Създаване на таблицата
-db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS offers (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    project TEXT,
-    client TEXT,
-    description TEXT,
-    deadline TEXT,
-    price REAL
-  )`);
+app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+app.use(session({
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: true
+}));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'home.html'));
 });
 
-// Основна страница
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
-
-// Добавяне на оферта
-app.post("/add-offer", (req, res) => {
-  const { project, client, description, deadline, price } = req.body;
-  db.run("INSERT INTO offers (project, client, description, deadline, price) VALUES (?, ?, ?, ?, ?)",
-    [project, client, description, deadline, price],
-    function (err) {
-      if (err) return res.status(500).send("Грешка при запис");
-      res.send({ success: true, id: this.lastID });
-    });
+app.get('/offers', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'offers.html'));
 });
 
-// Извличане на оферти
-app.get("/offers", (req, res) => {
-  db.all("SELECT * FROM offers", (err, rows) => {
-    if (err) return res.status(500).send("Грешка при четене");
-    res.json(rows);
-  });
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
-
-app.listen(process.env.PORT || 3000, () => console.log("Сървърът работи на порт 3000"));
