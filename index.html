@@ -139,14 +139,44 @@ function playNotification(sender) {
     }, 1000);
   }
 }
+
+let activeTab = "home";
+
+document.querySelectorAll('.nav').forEach(nav => {
+  nav.addEventListener('click', () => {
+    activeTab = nav.getAttribute("data-target");
+    if (activeTab === "home") {
+      document.getElementById("homeDot").style.display = "none";
+    }
+  });
+});
+
+function playNotification(sender) {
+  const currentUser = document.getElementById("chatUsername").value;
+  if (sender !== currentUser) {
+    const audio = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1156-pristine.mp3");
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+    document.getElementById("chatBox").style.border = "2px solid #0af";
+    setTimeout(() => {
+      document.getElementById("chatBox").style.border = "1px solid #ccc";
+    }, 1000);
+
+    if (activeTab !== "home") {
+      document.getElementById("homeDot").style.display = "inline";
+    }
+  }
+}
 </script>
+</html>
+
 </html>
 
 
   <div class="container">
     <div class="sidebar">
       <h2>Технически изделия</h2>
-      <a href="#" class="nav" data-target="home">Начало</a>
+      <a href="#" class="nav" data-target="home" id="homeNav"><span id="homeDot" style="color:red; display:none;">● </span>Начало</a>
       <a href="#" class="nav" data-target="offers">Оферти и ремонти</a>
       <a href="#" class="nav" data-target="stock">Склад</a>
       <a href="#" class="nav" data-target="users">Потребители</a>
@@ -474,7 +504,37 @@ function playNotification(sender) {
     }, 1000);
   }
 }
+
+let activeTab = "home";
+
+document.querySelectorAll('.nav').forEach(nav => {
+  nav.addEventListener('click', () => {
+    activeTab = nav.getAttribute("data-target");
+    if (activeTab === "home") {
+      document.getElementById("homeDot").style.display = "none";
+    }
+  });
+});
+
+function playNotification(sender) {
+  const currentUser = document.getElementById("chatUsername").value;
+  if (sender !== currentUser) {
+    const audio = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1156-pristine.mp3");
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+    document.getElementById("chatBox").style.border = "2px solid #0af";
+    setTimeout(() => {
+      document.getElementById("chatBox").style.border = "1px solid #ccc";
+    }, 1000);
+
+    if (activeTab !== "home") {
+      document.getElementById("homeDot").style.display = "inline";
+    }
+  }
+}
 </script>
+</html>
+
 </html>
 
 
@@ -533,7 +593,37 @@ function playNotification(sender) {
     }, 1000);
   }
 }
+
+let activeTab = "home";
+
+document.querySelectorAll('.nav').forEach(nav => {
+  nav.addEventListener('click', () => {
+    activeTab = nav.getAttribute("data-target");
+    if (activeTab === "home") {
+      document.getElementById("homeDot").style.display = "none";
+    }
+  });
+});
+
+function playNotification(sender) {
+  const currentUser = document.getElementById("chatUsername").value;
+  if (sender !== currentUser) {
+    const audio = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1156-pristine.mp3");
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+    document.getElementById("chatBox").style.border = "2px solid #0af";
+    setTimeout(() => {
+      document.getElementById("chatBox").style.border = "1px solid #ccc";
+    }, 1000);
+
+    if (activeTab !== "home") {
+      document.getElementById("homeDot").style.display = "inline";
+    }
+  }
+}
 </script>
+</html>
+
 </html>
 
 
@@ -688,7 +778,37 @@ function playNotification(sender) {
     }, 1000);
   }
 }
+
+let activeTab = "home";
+
+document.querySelectorAll('.nav').forEach(nav => {
+  nav.addEventListener('click', () => {
+    activeTab = nav.getAttribute("data-target");
+    if (activeTab === "home") {
+      document.getElementById("homeDot").style.display = "none";
+    }
+  });
+});
+
+function playNotification(sender) {
+  const currentUser = document.getElementById("chatUsername").value;
+  if (sender !== currentUser) {
+    const audio = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1156-pristine.mp3");
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+    document.getElementById("chatBox").style.border = "2px solid #0af";
+    setTimeout(() => {
+      document.getElementById("chatBox").style.border = "1px solid #ccc";
+    }, 1000);
+
+    if (activeTab !== "home") {
+      document.getElementById("homeDot").style.display = "inline";
+    }
+  }
+}
 </script>
+</html>
+
 </html>
 
 
@@ -747,7 +867,37 @@ function playNotification(sender) {
     }, 1000);
   }
 }
+
+let activeTab = "home";
+
+document.querySelectorAll('.nav').forEach(nav => {
+  nav.addEventListener('click', () => {
+    activeTab = nav.getAttribute("data-target");
+    if (activeTab === "home") {
+      document.getElementById("homeDot").style.display = "none";
+    }
+  });
+});
+
+function playNotification(sender) {
+  const currentUser = document.getElementById("chatUsername").value;
+  if (sender !== currentUser) {
+    const audio = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1156-pristine.mp3");
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+    document.getElementById("chatBox").style.border = "2px solid #0af";
+    setTimeout(() => {
+      document.getElementById("chatBox").style.border = "1px solid #ccc";
+    }, 1000);
+
+    if (activeTab !== "home") {
+      document.getElementById("homeDot").style.display = "inline";
+    }
+  }
+}
 </script>
+</html>
+
 </html>
 
 </body>
@@ -803,7 +953,37 @@ function playNotification(sender) {
     }, 1000);
   }
 }
+
+let activeTab = "home";
+
+document.querySelectorAll('.nav').forEach(nav => {
+  nav.addEventListener('click', () => {
+    activeTab = nav.getAttribute("data-target");
+    if (activeTab === "home") {
+      document.getElementById("homeDot").style.display = "none";
+    }
+  });
+});
+
+function playNotification(sender) {
+  const currentUser = document.getElementById("chatUsername").value;
+  if (sender !== currentUser) {
+    const audio = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1156-pristine.mp3");
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+    document.getElementById("chatBox").style.border = "2px solid #0af";
+    setTimeout(() => {
+      document.getElementById("chatBox").style.border = "1px solid #ccc";
+    }, 1000);
+
+    if (activeTab !== "home") {
+      document.getElementById("homeDot").style.display = "inline";
+    }
+  }
+}
 </script>
+</html>
+
 </html>
 
 
@@ -1016,7 +1196,37 @@ function playNotification(sender) {
     }, 1000);
   }
 }
+
+let activeTab = "home";
+
+document.querySelectorAll('.nav').forEach(nav => {
+  nav.addEventListener('click', () => {
+    activeTab = nav.getAttribute("data-target");
+    if (activeTab === "home") {
+      document.getElementById("homeDot").style.display = "none";
+    }
+  });
+});
+
+function playNotification(sender) {
+  const currentUser = document.getElementById("chatUsername").value;
+  if (sender !== currentUser) {
+    const audio = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1156-pristine.mp3");
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+    document.getElementById("chatBox").style.border = "2px solid #0af";
+    setTimeout(() => {
+      document.getElementById("chatBox").style.border = "1px solid #ccc";
+    }, 1000);
+
+    if (activeTab !== "home") {
+      document.getElementById("homeDot").style.display = "inline";
+    }
+  }
+}
 </script>
+</html>
+
 </html>
 
 
@@ -1134,7 +1344,37 @@ function playNotification(sender) {
     }, 1000);
   }
 }
+
+let activeTab = "home";
+
+document.querySelectorAll('.nav').forEach(nav => {
+  nav.addEventListener('click', () => {
+    activeTab = nav.getAttribute("data-target");
+    if (activeTab === "home") {
+      document.getElementById("homeDot").style.display = "none";
+    }
+  });
+});
+
+function playNotification(sender) {
+  const currentUser = document.getElementById("chatUsername").value;
+  if (sender !== currentUser) {
+    const audio = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1156-pristine.mp3");
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+    document.getElementById("chatBox").style.border = "2px solid #0af";
+    setTimeout(() => {
+      document.getElementById("chatBox").style.border = "1px solid #ccc";
+    }, 1000);
+
+    if (activeTab !== "home") {
+      document.getElementById("homeDot").style.display = "inline";
+    }
+  }
+}
 </script>
+</html>
+
 </html>
 
 </html>
@@ -1205,7 +1445,37 @@ function playNotification(sender) {
     }, 1000);
   }
 }
+
+let activeTab = "home";
+
+document.querySelectorAll('.nav').forEach(nav => {
+  nav.addEventListener('click', () => {
+    activeTab = nav.getAttribute("data-target");
+    if (activeTab === "home") {
+      document.getElementById("homeDot").style.display = "none";
+    }
+  });
+});
+
+function playNotification(sender) {
+  const currentUser = document.getElementById("chatUsername").value;
+  if (sender !== currentUser) {
+    const audio = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1156-pristine.mp3");
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+    document.getElementById("chatBox").style.border = "2px solid #0af";
+    setTimeout(() => {
+      document.getElementById("chatBox").style.border = "1px solid #ccc";
+    }, 1000);
+
+    if (activeTab !== "home") {
+      document.getElementById("homeDot").style.display = "inline";
+    }
+  }
+}
 </script>
+</html>
+
 </html>
 
 </html>
@@ -1229,7 +1499,37 @@ function playNotification(sender) {
     }, 1000);
   }
 }
+
+let activeTab = "home";
+
+document.querySelectorAll('.nav').forEach(nav => {
+  nav.addEventListener('click', () => {
+    activeTab = nav.getAttribute("data-target");
+    if (activeTab === "home") {
+      document.getElementById("homeDot").style.display = "none";
+    }
+  });
+});
+
+function playNotification(sender) {
+  const currentUser = document.getElementById("chatUsername").value;
+  if (sender !== currentUser) {
+    const audio = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1156-pristine.mp3");
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+    document.getElementById("chatBox").style.border = "2px solid #0af";
+    setTimeout(() => {
+      document.getElementById("chatBox").style.border = "1px solid #ccc";
+    }, 1000);
+
+    if (activeTab !== "home") {
+      document.getElementById("homeDot").style.display = "inline";
+    }
+  }
+}
 </script>
+</html>
+
 </html>
 
 </html>
