@@ -102,6 +102,29 @@ function checkLogin() {
     window.location.href = "login.html";
   }
 }
+
+function loadChatHistory() {
+  fetch("/api/messages")
+    .then(res => res.json())
+    .then(data => {
+      const box = document.getElementById("chatBox");
+      data.forEach(msg => {
+        const div = document.createElement("div");
+        const role = msg.username.toLowerCase() === "admin" ? "[админ] " : "";
+        div.textContent = msg.timestamp.slice(11,16) + " – " + role + msg.username + ": " + msg.text;
+        div.classList.add("chat-message");
+        box.appendChild(div);
+      });
+      box.scrollTop = box.scrollHeight;
+    });
+}
+
+function filterChat() {
+  const filter = document.getElementById("chatFilter").value.toLowerCase();
+  document.querySelectorAll("#chatBox .chat-message").forEach(msg => {
+    msg.style.display = msg.textContent.toLowerCase().includes(filter) ? "" : "none";
+  });
+}
 </script>
 
   <div class="container">
@@ -120,7 +143,8 @@ function checkLogin() {
   <h2>Чат между потребители</h2>
   <div class="card">
     <input id="chatUsername" placeholder="Вашето име">
-    <div id="chatBox" style="margin-top:10px; max-height:300px; overflow:auto; background:#f1f1f1; padding:10px; border-radius:8px;"></div>
+    <input id="chatFilter" placeholder="Филтър по потребител..." onkeyup="filterChat()" style="margin-bottom:8px;">
+<div id="chatBox" style="margin-top:10px; max-height:300px; overflow:auto; background:#f1f1f1; padding:10px; border-radius:8px;"></div>
     <input id="chatInput" placeholder="Въведи съобщение">
     <button class="btn" onclick="sendWS()">Изпрати</button>
   </div>
@@ -397,6 +421,29 @@ function sendMessage() {
 function editOffer(btn) {
     alert("Редакция – в пълна система ще отваря форма с данните.");
   }
+
+function loadChatHistory() {
+  fetch("/api/messages")
+    .then(res => res.json())
+    .then(data => {
+      const box = document.getElementById("chatBox");
+      data.forEach(msg => {
+        const div = document.createElement("div");
+        const role = msg.username.toLowerCase() === "admin" ? "[админ] " : "";
+        div.textContent = msg.timestamp.slice(11,16) + " – " + role + msg.username + ": " + msg.text;
+        div.classList.add("chat-message");
+        box.appendChild(div);
+      });
+      box.scrollTop = box.scrollHeight;
+    });
+}
+
+function filterChat() {
+  const filter = document.getElementById("chatFilter").value.toLowerCase();
+  document.querySelectorAll("#chatBox .chat-message").forEach(msg => {
+    msg.style.display = msg.textContent.toLowerCase().includes(filter) ? "" : "none";
+  });
+}
 </script>
 
 <!-- Модален прозорец за визуализация -->
@@ -417,6 +464,29 @@ function editOffer(btn) {
       document.getElementById("modal").style.display = "none";
     }
   });
+
+function loadChatHistory() {
+  fetch("/api/messages")
+    .then(res => res.json())
+    .then(data => {
+      const box = document.getElementById("chatBox");
+      data.forEach(msg => {
+        const div = document.createElement("div");
+        const role = msg.username.toLowerCase() === "admin" ? "[админ] " : "";
+        div.textContent = msg.timestamp.slice(11,16) + " – " + role + msg.username + ": " + msg.text;
+        div.classList.add("chat-message");
+        box.appendChild(div);
+      });
+      box.scrollTop = box.scrollHeight;
+    });
+}
+
+function filterChat() {
+  const filter = document.getElementById("chatFilter").value.toLowerCase();
+  document.querySelectorAll("#chatBox .chat-message").forEach(msg => {
+    msg.style.display = msg.textContent.toLowerCase().includes(filter) ? "" : "none";
+  });
+}
 </script>
 
 <script>
@@ -533,6 +603,29 @@ function addStock() {
   matrix.value = "";
   quantity.value = "";
 }
+
+function loadChatHistory() {
+  fetch("/api/messages")
+    .then(res => res.json())
+    .then(data => {
+      const box = document.getElementById("chatBox");
+      data.forEach(msg => {
+        const div = document.createElement("div");
+        const role = msg.username.toLowerCase() === "admin" ? "[админ] " : "";
+        div.textContent = msg.timestamp.slice(11,16) + " – " + role + msg.username + ": " + msg.text;
+        div.classList.add("chat-message");
+        box.appendChild(div);
+      });
+      box.scrollTop = box.scrollHeight;
+    });
+}
+
+function filterChat() {
+  const filter = document.getElementById("chatFilter").value.toLowerCase();
+  document.querySelectorAll("#chatBox .chat-message").forEach(msg => {
+    msg.style.display = msg.textContent.toLowerCase().includes(filter) ? "" : "none";
+  });
+}
 </script>
 
 <script>
@@ -553,6 +646,29 @@ function filterOffers() {
     }
   });
 }
+
+function loadChatHistory() {
+  fetch("/api/messages")
+    .then(res => res.json())
+    .then(data => {
+      const box = document.getElementById("chatBox");
+      data.forEach(msg => {
+        const div = document.createElement("div");
+        const role = msg.username.toLowerCase() === "admin" ? "[админ] " : "";
+        div.textContent = msg.timestamp.slice(11,16) + " – " + role + msg.username + ": " + msg.text;
+        div.classList.add("chat-message");
+        box.appendChild(div);
+      });
+      box.scrollTop = box.scrollHeight;
+    });
+}
+
+function filterChat() {
+  const filter = document.getElementById("chatFilter").value.toLowerCase();
+  document.querySelectorAll("#chatBox .chat-message").forEach(msg => {
+    msg.style.display = msg.textContent.toLowerCase().includes(filter) ? "" : "none";
+  });
+}
 </script>
 </body>
 
@@ -570,6 +686,29 @@ document.querySelectorAll('.nav').forEach(link => {
     this.classList.add('active');
   });
 });
+
+function loadChatHistory() {
+  fetch("/api/messages")
+    .then(res => res.json())
+    .then(data => {
+      const box = document.getElementById("chatBox");
+      data.forEach(msg => {
+        const div = document.createElement("div");
+        const role = msg.username.toLowerCase() === "admin" ? "[админ] " : "";
+        div.textContent = msg.timestamp.slice(11,16) + " – " + role + msg.username + ": " + msg.text;
+        div.classList.add("chat-message");
+        box.appendChild(div);
+      });
+      box.scrollTop = box.scrollHeight;
+    });
+}
+
+function filterChat() {
+  const filter = document.getElementById("chatFilter").value.toLowerCase();
+  document.querySelectorAll("#chatBox .chat-message").forEach(msg => {
+    msg.style.display = msg.textContent.toLowerCase().includes(filter) ? "" : "none";
+  });
+}
 </script>
 
 <script>
@@ -744,6 +883,29 @@ function addStock() {
 function editOffer(btn) {
   alert("Редакцията е активирана. Попълнете нова стойност чрез формата.");
 }
+
+function loadChatHistory() {
+  fetch("/api/messages")
+    .then(res => res.json())
+    .then(data => {
+      const box = document.getElementById("chatBox");
+      data.forEach(msg => {
+        const div = document.createElement("div");
+        const role = msg.username.toLowerCase() === "admin" ? "[админ] " : "";
+        div.textContent = msg.timestamp.slice(11,16) + " – " + role + msg.username + ": " + msg.text;
+        div.classList.add("chat-message");
+        box.appendChild(div);
+      });
+      box.scrollTop = box.scrollHeight;
+    });
+}
+
+function filterChat() {
+  const filter = document.getElementById("chatFilter").value.toLowerCase();
+  document.querySelectorAll("#chatBox .chat-message").forEach(msg => {
+    msg.style.display = msg.textContent.toLowerCase().includes(filter) ? "" : "none";
+  });
+}
 </script>
 
 <script>
@@ -823,6 +985,29 @@ function addOffer() {
   document.getElementById("priority").value = "Средна";
   document.getElementById("imageUpload").value = "";
 }
+
+function loadChatHistory() {
+  fetch("/api/messages")
+    .then(res => res.json())
+    .then(data => {
+      const box = document.getElementById("chatBox");
+      data.forEach(msg => {
+        const div = document.createElement("div");
+        const role = msg.username.toLowerCase() === "admin" ? "[админ] " : "";
+        div.textContent = msg.timestamp.slice(11,16) + " – " + role + msg.username + ": " + msg.text;
+        div.classList.add("chat-message");
+        box.appendChild(div);
+      });
+      box.scrollTop = box.scrollHeight;
+    });
+}
+
+function filterChat() {
+  const filter = document.getElementById("chatFilter").value.toLowerCase();
+  document.querySelectorAll("#chatBox .chat-message").forEach(msg => {
+    msg.style.display = msg.textContent.toLowerCase().includes(filter) ? "" : "none";
+  });
+}
 </script>
 </html>
 
@@ -848,6 +1033,43 @@ function sendWS() {
   input.value = "";
 }
 
-window.addEventListener("load", setupWS);
+
+window.addEventListener("load", () => {
+  setupWS();
+  loadChatHistory();
+});
+
+
+function loadChatHistory() {
+  fetch("/api/messages")
+    .then(res => res.json())
+    .then(data => {
+      const box = document.getElementById("chatBox");
+      data.forEach(msg => {
+        const div = document.createElement("div");
+        const role = msg.username.toLowerCase() === "admin" ? "[админ] " : "";
+        div.textContent = msg.timestamp.slice(11,16) + " – " + role + msg.username + ": " + msg.text;
+        div.classList.add("chat-message");
+        box.appendChild(div);
+      });
+      box.scrollTop = box.scrollHeight;
+    });
+}
+
+function filterChat() {
+  const filter = document.getElementById("chatFilter").value.toLowerCase();
+  document.querySelectorAll("#chatBox .chat-message").forEach(msg => {
+    msg.style.display = msg.textContent.toLowerCase().includes(filter) ? "" : "none";
+  });
+}
+</script>
+</html>
+
+<script>
+function showCurrentUser() {
+  const current = sessionStorage.getItem("loggedIn") === "true" ? "✓ Вие сте онлайн" : "Не сте логнат";
+  document.getElementById("userList").textContent = current;
+}
+window.addEventListener("load", showCurrentUser);
 </script>
 </html>
