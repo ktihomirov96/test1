@@ -5,21 +5,33 @@
   <meta charset="UTF-8" />
   <title>Технически изделия</title>
   <style>
-    body { font-family: sans-serif; margin: 0; display: flex; }
-    nav { width: 220px; background: #1e3a5f; color: white; height: 100vh; padding: 10px; box-sizing: border-box; }
-    nav a { display: block; padding: 10px; color: white; text-decoration: none; }
-    nav a.active { background: #3b82f6; }
-    main { flex: 1; padding: 20px; background: #f9fafb; }
+    body { margin: 0; font-family: sans-serif; display: flex; height: 100vh; }
+    nav {
+      width: 240px; background: #1e3a5f; color: white;
+      padding: 20px; box-sizing: border-box;
+    }
+    nav h2 { margin-top: 0; font-size: 18px; }
+    nav a {
+      display: block; padding: 10px; color: white; text-decoration: none;
+      border-radius: 4px; margin-bottom: 5px;
+    }
+    nav a.active, nav a:hover { background: #3b82f6; }
+    main {
+      flex: 1; background: #f3f4f6; padding: 20px; overflow-y: auto;
+    }
     section { display: none; }
     section.active { display: block; }
-    input, select { margin: 4px; padding: 6px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #ccc; padding: 6px; }
+    input, select, button {
+      padding: 8px; margin: 5px 0; width: 100%;
+    }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+    img { max-width: 60px; }
   </style>
 </head>
 <body>
   <nav>
-    <div style="font-weight: bold; margin-bottom: 20px;">🔧 Технически изделия</div>
+    <h2>🔧 Технически изделия</h2>
     <a href="#" class="nav-link active" data-target="home">Начало</a>
     <a href="#" class="nav-link" data-target="offers">Оферти и ремонти</a>
     <a href="#" class="nav-link" data-target="warehouse">Склад</a>
@@ -28,188 +40,105 @@
   <main>
     <section id="home" class="active">
       <h2>Чат</h2>
-      <input id="chatUsername" placeholder="Вашето име" />
-      <div id="chatBox" style="height:200px; overflow:auto; border:1px solid #ccc; margin:10px 0;"></div>
-      <input id="chatInput" placeholder="Съобщение" />
+      <input id="chatUsername" placeholder="Име">
+      <input id="chatInput" placeholder="Съобщение">
       <button onclick="sendWS()">Изпрати</button>
+      <div id="chatBox" style="height:200px; border:1px solid #ccc; overflow:auto; margin-top:10px;"></div>
     </section>
-
     <section id="offers">
-      <h2>Добави оферта</h2>
-<input id="searchOffers" placeholder="Търси по клиент или матрица..." onkeyup="filterOffers()">
-      <input id="project" placeholder="Проект №">
-      <input id="matrixNo" placeholder="Матрица">
-      <input id="client" placeholder="Клиент">
-      <input id="description" placeholder="Описание">
-      <input id="dueDate" type="date">
-      <input id="price" placeholder="Цена">
-      <input id="email" placeholder="Email">
-      <select id="priority"><option>Ниска</option><option>Средна</option><option>Висока</option></select>
-      <input type="file" id="imageUpload">
-      <button onclick="submitOffer()">Запази</button>
-      <table><thead><tr><th>Проект</th><th>Матрица</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th><th>Email</th><th>Приоритет</th><th>Снимка</th><th></th></tr></thead>
+      <h2>Добавяне на оферта</h2>
+      <input id="project" placeholder="Проект"><input id="matrixNo" placeholder="Матрица">
+      <input id="client" placeholder="Клиент"><input id="description" placeholder="Описание">
+      <input id="dueDate" type="date"><input id="price" placeholder="Цена">
+      <input id="email" placeholder="Email"><select id="priority">
+        <option>Ниска</option><option>Средна</option><option>Висока</option></select>
+      <input type="file" id="imageUpload"><button onclick="submitOffer()">Запази</button>
+      <table><thead><tr><th>Проект</th><th>Матрица</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th><th>Email</th><th>Приоритет</th><th>Снимка</th></tr></thead>
       <tbody id="offersTable"></tbody></table>
     </section>
-
     <section id="warehouse">
       <h2>Склад</h2>
-      <input id="stockMatrix" placeholder="Номер на матрица">
-      <input id="stockQty" type="number" placeholder="Количество">
+      <input id="stockMatrix" placeholder="Матрица">
+      <input id="stockDeadline" type="date">
       <button onclick="addStock()">Добави</button>
       <ul id="stockList"></ul>
     </section>
-
     <section id="users">
-      <h2>Потребители онлайн</h2>
-      <p id="userList">✓ Вие сте онлайн</p>
+      <h2>Потребители</h2>
+      <p>✓ Вие сте онлайн</p>
     </section>
   </main>
-
   <script>
-    let ws;
-    function initNav() {
-      document.querySelectorAll(".nav-link").forEach(link => {
-        link.addEventListener("click", e => {
-          e.preventDefault();
-          document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
-          link.classList.add("active");
-          const target = link.getAttribute("data-target");
-          document.querySelectorAll("main section").forEach(sec => sec.classList.remove("active"));
-          document.getElementById(target).classList.add("active");
-        });
+    document.querySelectorAll(".nav-link").forEach(link => {
+      link.addEventListener("click", e => {
+        e.preventDefault();
+        document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
+        document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+        link.classList.add("active");
+        document.getElementById(link.dataset.target).classList.add("active");
       });
-    }
+    });
 
-    function setupWS() {
-      const proto = location.protocol === "https:" ? "wss" : "ws";
-      const host = location.hostname === "localhost" ? "localhost:3000" : location.host;
-      ws = new WebSocket(proto + "://" + host);
-      ws.onmessage = function(event) {
-        const msg = JSON.parse(event.data);
-        const box = document.getElementById("chatBox");
-        const div = document.createElement("div");
-        div.textContent = msg.timestamp.slice(11,16) + " – " + msg.username + ": " + msg.text;
-        box.appendChild(div);
-        box.scrollTop = box.scrollHeight;
-      };
-    }
-
+    const proto = location.protocol === "https:" ? "wss" : "ws";
+    const host = location.hostname === "localhost" ? "localhost:3000" : location.host;
+    const ws = new WebSocket(proto + "://" + host);
+    ws.onmessage = e => {
+      const m = JSON.parse(e.data);
+      const box = document.getElementById("chatBox");
+      if (box) box.innerHTML += m.timestamp.slice(11,16) + " – " + m.username + ": " + m.text + "<br>";
+    };
     function sendWS() {
-      const name = document.getElementById("chatUsername").value;
-      const input = document.getElementById("chatInput");
-      if (!name || !input.value) return;
-      ws.send(JSON.stringify({ username: name, text: input.value }));
-      input.value = "";
+      const u = document.getElementById("chatUsername").value;
+      const t = document.getElementById("chatInput").value;
+      if (u && t) ws.send(JSON.stringify({ username: u, text: t }));
+      document.getElementById("chatInput").value = "";
     }
 
     function submitOffer() {
       const data = {
-        project: document.getElementById("project").value,
-        matrixNo: document.getElementById("matrixNo").value,
-        client: document.getElementById("client").value,
-        description: document.getElementById("description").value,
-        dueDate: document.getElementById("dueDate").value,
-        price: document.getElementById("price").value,
-        email: document.getElementById("email").value,
-        priority: document.getElementById("priority").value,
-        image: ""
+        project: project.value, matrixNo: matrixNo.value, client: client.value,
+        description: description.value, dueDate: dueDate.value, price: price.value,
+        email: email.value, priority: priority.value, image: ""
       };
-      const file = document.getElementById("imageUpload").files[0];
+      const file = imageUpload.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
-          data.image = e.target.result;
-          sendOffer(data);
-        };
-        reader.readAsDataURL(file);
-        return;
+        reader.onload = e => { data.image = e.target.result; sendOffer(data); };
+        reader.readAsDataURL(file); return;
       }
       sendOffer(data);
     }
-
     function sendOffer(data) {
       fetch("/api/offers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       }).then(() => loadOffers());
     }
-
     function loadOffers() {
       fetch("/api/offers").then(res => res.json()).then(data => {
-        const table = document.getElementById("offersTable");
-        table.innerHTML = "";
+        offersTable.innerHTML = "";
         data.forEach(o => {
-          const row = document.createElement("tr");
-          const color = o.priority === "Висока" ? "#f87171" : o.priority === "Средна" ? "#facc15" : "#34d399";
-          row.innerHTML = `
-            <td>${o.project}</td><td>${o.matrixNo}</td><td>${o.client}</td>
-            <td>${o.description}</td><td>${o.dueDate}</td><td>${o.price}</td>
-            <td>${o.email}</td><td style="background:${color}">${o.priority}</td>
-            <td><img src="${o.image}" /></td>
-            <td><button onclick="editOffer(${o.id})">Редактирай</button> <button onclick="deleteOffer(${o.id})">Изтрий</button></td>`;
-          table.appendChild(row);
+          let color = o.priority==="Висока"?"#f87171":o.priority==="Средна"?"#facc15":"#34d399";
+          offersTable.innerHTML += `<tr><td>${o.project}</td><td>${o.matrixNo}</td><td>${o.client}</td>
+            <td>${o.description}</td><td>${o.dueDate}</td><td>${o.price}</td><td>${o.email}</td>
+            <td style="background:${color}">${o.priority}</td><td><img src="${o.image}" /></td></tr>`;
         });
       });
     }
 
-    function deleteOffer(id) {
-      fetch("/api/offers/" + id, { method: "DELETE" }).then(() => loadOffers());
-    }
-
     function addStock() {
       const m = document.getElementById("stockMatrix").value;
-      const q = document.getElementById("stockQty").value;
+      const d = document.getElementById("stockDeadline").value;
+      const now = new Date(), end = new Date(d);
+      const days = Math.ceil((end - now)/(1000*60*60*24));
+      let color = "#34d399"; if (days <= 7) color = "#facc15"; if (days <= 3) color = "#f87171";
       const li = document.createElement("li");
-      li.textContent = `Матрица ${m} – ${q} бр.`;
+      li.style.background = color;
+      li.textContent = `Матрица ${m} – Краен срок: ${d} (${days} дни)`;
       document.getElementById("stockList").appendChild(li);
     }
 
-    window.onload = () => {
-      initNav();
-      setupWS();
-      loadOffers();
-    };
+    loadOffers();
   </script>
 </body>
 </html>
-
-<script>
-let editId = null;
-
-function filterOffers() {
-  const term = document.getElementById("searchOffers").value.toLowerCase();
-  document.querySelectorAll("#offersTable tr").forEach(row => {
-    row.style.display = row.textContent.toLowerCase().includes(term) ? "" : "none";
-  });
-}
-
-function editOffer(id) {
-  fetch("/api/offers").then(res => res.json()).then(data => {
-    const offer = data.find(o => o.id === id);
-    if (!offer) return;
-    document.getElementById("project").value = offer.project;
-    document.getElementById("matrixNo").value = offer.matrixNo;
-    document.getElementById("client").value = offer.client;
-    document.getElementById("description").value = offer.description;
-    document.getElementById("dueDate").value = offer.dueDate;
-    document.getElementById("price").value = offer.price;
-    document.getElementById("email").value = offer.email;
-    document.getElementById("priority").value = offer.priority;
-    editId = id;
-  });
-}
-
-function sendOffer(data) {
-  const url = editId ? "/api/offers/" + editId : "/api/offers";
-  const method = editId ? "PUT" : "POST";
-  fetch(url, {
-    method: method,
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  }).then(() => {
-    editId = null;
-    loadOffers();
-  });
-}
-</script>
