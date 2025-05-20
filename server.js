@@ -19,7 +19,6 @@ db.serialize(() => {
   )`);
 });
 
-// API: зареждане на всички съобщения
 app.get('/api/messages', (req, res) => {
   db.all("SELECT * FROM messages ORDER BY id DESC LIMIT 50", [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -43,7 +42,6 @@ wss.on('connection', function connection(ws) {
       db.run("INSERT INTO messages (username, text, timestamp) VALUES (?, ?, ?)",
         [msg.username, msg.text, timestamp]);
 
-      // изпращаме съобщението към всички клиенти
       const payload = JSON.stringify({ username: msg.username, text: msg.text, timestamp });
       wss.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
