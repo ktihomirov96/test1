@@ -6,17 +6,12 @@
   <title>Технически изделия</title>
   <style>
     body { font-family: sans-serif; margin: 0; display: flex; }
-    nav { width: 220px; background: #1e3a5f; color: white; height: 100vh; padding: 10px; }
-    nav a { display: block; padding: 10px; color: white; text-decoration: none; border-bottom: 1px solid #446; }
+    nav { width: 200px; background: #1e3a5f; color: white; height: 100vh; padding: 10px; }
+    nav a { display: block; padding: 10px; color: white; text-decoration: none; }
     nav a.active { background: #3b82f6; }
     main { flex: 1; padding: 20px; }
     .section { display: none; }
     .section.active { display: block; }
-    input, select { padding: 5px; margin: 4px; }
-    .btn { padding: 6px 12px; margin: 2px; cursor: pointer; }
-    .red { background: red; color: white; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    td, th { border: 1px solid #ccc; padding: 5px; text-align: left; }
   </style>
 </head>
 <body onload="initApp()">
@@ -28,51 +23,27 @@
   </nav>
   <main>
     <div id="home" class="section active">
-      <h2>Чат</h2>
+      <h1>Чат</h1>
       <input id="chatUsername" placeholder="Вашето име">
       <div id="chatBox" style="height:200px; overflow:auto; border:1px solid #ccc; margin:10px 0; padding:10px;"></div>
       <input id="chatInput" placeholder="Съобщение">
       <button onclick="sendWS()">Изпрати</button>
     </div>
-
     <div id="offers" class="section">
-      <h2>Добавяне на оферта</h2>
-      <input id="project" placeholder="Проект">
-      <input id="matrixNo" placeholder="Матрица">
-      <input id="client" placeholder="Клиент">
-      <input id="desc" placeholder="Описание">
-      <input id="date" type="date">
-      <input id="price" placeholder="Цена">
-      <input id="email" placeholder="Email">
-      <select id="priority">
-        <option>Ниска</option>
-        <option selected>Средна</option>
-        <option>Висока</option>
-      </select>
-      <input id="imageUpload" type="file">
-      <button onclick="addOffer()">Добави оферта</button>
-      <input id="searchInput" placeholder="Търси по клиент или матрица..." onkeyup="filterOffers()">
-      <table>
-        <thead><tr><th>Проект</th><th>Матрица</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th><th>Email</th><th>Приоритет</th><th>Снимка</th><th></th></tr></thead>
-        <tbody id="offerTable"></tbody>
-      </table>
+      <h1>Оферти и ремонти</h1>
+      <p>Тук ще има оферти...</p>
     </div>
-
     <div id="warehouse" class="section">
-      <h2>Добавяне в склад</h2>
-      <input id="matrix" placeholder="Номер на матрица">
-      <input id="quantity" placeholder="Количество">
-      <button onclick="addStock()">Добави</button>
-      <ul id="stockList"></ul>
+      <h1>Склад</h1>
+      <p>Управление на склад...</p>
     </div>
-
     <div id="users" class="section">
-      <h2>Потребители онлайн</h2>
-      <p id="userList">✓ Вие сте онлайн</p>
+      <h1>Потребители</h1>
+      <p>Само логнати потребители се виждат тук...</p>
     </div>
   </main>
   <script>
-    let ws;
+    let activeTab = "home";
     function initApp() {
       document.querySelectorAll(".nav-link").forEach(link => {
         link.addEventListener("click", e => {
@@ -82,12 +53,13 @@
           document.querySelector(`#${target}`).classList.add("active");
           document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
           link.classList.add("active");
+          activeTab = target;
         });
       });
       setupWS();
-      loadOffers();
     }
 
+    let ws;
     function setupWS() {
       ws = new WebSocket("wss://" + window.location.host);
       ws.onmessage = function(event) {
@@ -117,88 +89,53 @@
         audio.play().catch(() => {});
       }
     }
+  
+function deleteOffer(id) {
+  if (!confirm("Сигурни ли сте, че искате да изтриете тази оферта?")) return;
+  fetch("/api/offers/" + id, {
+    method: "DELETE"
+  }).then(() => loadOffers());
+}
 
-    function addOffer() {
-      const data = {
-        project: document.getElementById("project").value,
-        matrixNo: document.getElementById("matrixNo").value,
-        client: document.getElementById("client").value,
-        description: document.getElementById("desc").value,
-        dueDate: document.getElementById("date").value,
-        price: document.getElementById("price").value,
-        email: document.getElementById("email").value,
-        priority: document.getElementById("priority").value,
-        image: ""
-      };
-      const file = document.getElementById("imageUpload").files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          data.image = e.target.result;
-          sendOffer(data);
-        };
-        reader.readAsDataURL(file);
-      } else {
-        sendOffer(data);
-      }
-    }
+let 
+editingId = null;
+document.getElementById("successMsg").style.display = "block";
+setTimeout(() => {
+  document.getElementById("successMsg").style.display = "none";
+}, 3000);
 
-    function sendOffer(data) {
-      fetch("/api/offers", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(data)
-      }).then(() => {
-        loadOffers();
-      });
-    }
+function editOffer(offer) {
+  editingId = offer.id;
+  document.getElementById("project").value = offer.project;
+  document.getElementById("matrixNo").value = offer.matrixNo;
+  document.getElementById("client").value = offer.client;
+  document.getElementById("desc").value = offer.description;
+  document.getElementById("date").value = offer.dueDate;
+  document.getElementById("price").value = offer.price;
+  document.getElementById("email").value = offer.email;
+  document.getElementById("priority").value = offer.priority;
+  window.scrollTo(0, 0);
+}
 
-    function loadOffers() {
-      fetch("/api/offers")
-        .then(res => res.json())
-        .then(data => {
-          const table = document.getElementById("offerTable");
-          table.innerHTML = "";
-          data.forEach(o => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-              <td>${o.project}</td>
-              <td>${o.matrixNo}</td>
-              <td>${o.client}</td>
-              <td>${o.description}</td>
-              <td>${o.dueDate}</td>
-              <td>${o.price}</td>
-              <td>${o.email}</td>
-              <td style="color:${getPriorityColor(o.priority)}">${o.priority}</td>
-              <td><img src="${o.image}" width="60"></td>
-              <td><button class="btn red" onclick="this.closest('tr').remove()">Изтрий</button></td>`;
-            table.appendChild(row);
-          });
-        });
-    }
+function sendOffer(data) {
+  const method = editingId ? "PUT" : "POST";
+  const url = editingId ? "/api/offers/" + editingId : "/api/offers";
+  fetch(url, {
+    method,
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(data)
+  }).then(() => {
+    loadOffers();
+    
+editingId = null;
+document.getElementById("successMsg").style.display = "block";
+setTimeout(() => {
+  document.getElementById("successMsg").style.display = "none";
+}, 3000);
 
-    function getPriorityColor(p) {
-      if (p === "Висока") return "red";
-      if (p === "Средна") return "orange";
-      if (p === "Ниска") return "green";
-      return "gray";
-    }
-
-    function addStock() {
-      const matrix = document.getElementById("matrix").value;
-      const qty = document.getElementById("quantity").value;
-      const list = document.getElementById("stockList");
-      const li = document.createElement("li");
-      li.textContent = `${matrix}: ${qty} бр.`;
-      list.appendChild(li);
-    }
-
-    function filterOffers() {
-      const val = document.getElementById("searchInput").value.toLowerCase();
-      document.querySelectorAll("#offerTable tr").forEach(row => {
-        row.style.display = row.textContent.toLowerCase().includes(val) ? "" : "none";
-      });
-    }
-  </script>
+    document.querySelectorAll("#offers input, #offers select").forEach(el => el.value = "");
+  });
+}
+</script>
 </body>
 </html>
