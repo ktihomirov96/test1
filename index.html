@@ -2,39 +2,39 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Технически изделия</title>
   <style>
     body { font-family: sans-serif; margin: 0; display: flex; }
-    nav { width: 220px; background: #1e3a5f; color: white; height: 100vh; padding: 10px; }
+    nav { width: 220px; background: #1e3a5f; color: white; height: 100vh; padding: 10px; box-sizing: border-box; }
     nav a { display: block; padding: 10px; color: white; text-decoration: none; }
     nav a.active { background: #3b82f6; }
     main { flex: 1; padding: 20px; background: #f9fafb; }
-    .section { display: none; }
-    .section.active { display: block; }
+    section { display: none; }
+    section.active { display: block; }
     input, select { margin: 4px; padding: 6px; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #ccc; padding: 6px; }
-    img { max-width: 60px; }
   </style>
 </head>
-<body onload="initApp()">
+<body>
   <nav>
-    <a href="#" class="nav-link active" data-section="home">Начало</a>
-    <a href="#" class="nav-link" data-section="offers">Оферти и ремонти</a>
-    <a href="#" class="nav-link" data-section="warehouse">Склад</a>
-    <a href="#" class="nav-link" data-section="users">Потребители</a>
+    <div style="font-weight: bold; margin-bottom: 20px;">🔧 Технически изделия</div>
+    <a href="#" class="nav-link active" data-target="home">Начало</a>
+    <a href="#" class="nav-link" data-target="offers">Оферти и ремонти</a>
+    <a href="#" class="nav-link" data-target="warehouse">Склад</a>
+    <a href="#" class="nav-link" data-target="users">Потребители</a>
   </nav>
   <main>
-    <div id="home" class="section active">
+    <section id="home" class="active">
       <h2>Чат</h2>
-      <input id="chatUsername" placeholder="Вашето име">
+      <input id="chatUsername" placeholder="Вашето име" />
       <div id="chatBox" style="height:200px; overflow:auto; border:1px solid #ccc; margin:10px 0;"></div>
-      <input id="chatInput" placeholder="Съобщение">
+      <input id="chatInput" placeholder="Съобщение" />
       <button onclick="sendWS()">Изпрати</button>
-    </div>
+    </section>
 
-    <div id="offers" class="section">
+    <section id="offers">
       <h2>Добави оферта</h2>
       <input id="project" placeholder="Проект №">
       <input id="matrixNo" placeholder="Матрица">
@@ -46,46 +46,43 @@
       <select id="priority"><option>Ниска</option><option>Средна</option><option>Висока</option></select>
       <input type="file" id="imageUpload">
       <button onclick="submitOffer()">Запази</button>
-      <table>
-        <thead><tr><th>Проект</th><th>Матрица</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th><th>Email</th><th>Приоритет</th><th>Снимка</th><th></th></tr></thead>
-        <tbody id="offersTable"></tbody>
-      </table>
-    </div>
+      <table><thead><tr><th>Проект</th><th>Матрица</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th><th>Email</th><th>Приоритет</th><th>Снимка</th><th></th></tr></thead>
+      <tbody id="offersTable"></tbody></table>
+    </section>
 
-    <div id="warehouse" class="section">
+    <section id="warehouse">
       <h2>Склад</h2>
       <input id="stockMatrix" placeholder="Номер на матрица">
       <input id="stockQty" type="number" placeholder="Количество">
       <button onclick="addStock()">Добави</button>
       <ul id="stockList"></ul>
-    </div>
+    </section>
 
-    <div id="users" class="section">
+    <section id="users">
       <h2>Потребители онлайн</h2>
       <p id="userList">✓ Вие сте онлайн</p>
-    </div>
+    </section>
   </main>
 
   <script>
     let ws;
-    function initApp() {
+    function initNav() {
       document.querySelectorAll(".nav-link").forEach(link => {
         link.addEventListener("click", e => {
           e.preventDefault();
           document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
           link.classList.add("active");
-          const section = link.getAttribute("data-section");
-          document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
-          document.getElementById(section).classList.add("active");
+          const target = link.getAttribute("data-target");
+          document.querySelectorAll("main section").forEach(sec => sec.classList.remove("active"));
+          document.getElementById(target).classList.add("active");
         });
       });
-      setupWS(); loadOffers();
     }
 
     function setupWS() {
       const proto = location.protocol === "https:" ? "wss" : "ws";
-const wsHost = location.hostname === "localhost" ? "localhost:3000" : location.host;
-ws = new WebSocket(proto + "://" + wsHost);
+      const host = location.hostname === "localhost" ? "localhost:3000" : location.host;
+      ws = new WebSocket(proto + "://" + host);
       ws.onmessage = function(event) {
         const msg = JSON.parse(event.data);
         const box = document.getElementById("chatBox");
@@ -124,9 +121,9 @@ ws = new WebSocket(proto + "://" + wsHost);
           sendOffer(data);
         };
         reader.readAsDataURL(file);
-      } else {
-        sendOffer(data);
+        return;
       }
+      sendOffer(data);
     }
 
     function sendOffer(data) {
@@ -143,13 +140,13 @@ ws = new WebSocket(proto + "://" + wsHost);
         table.innerHTML = "";
         data.forEach(o => {
           const row = document.createElement("tr");
+          const color = o.priority === "Висока" ? "#f87171" : o.priority === "Средна" ? "#facc15" : "#34d399";
           row.innerHTML = `
             <td>${o.project}</td><td>${o.matrixNo}</td><td>${o.client}</td>
             <td>${o.description}</td><td>${o.dueDate}</td><td>${o.price}</td>
-            <td>${o.email}</td><td>${o.priority}</td>
-            <td><img src="${o.image}"></td>
-            <td><button onclick="deleteOffer(${o.id})">Изтрий</button></td>
-          `;
+            <td>${o.email}</td><td style="background:${color}">${o.priority}</td>
+            <td><img src="${o.image}" /></td>
+            <td><button onclick="deleteOffer(${o.id})">Изтрий</button></td>`;
           table.appendChild(row);
         });
       });
@@ -166,6 +163,12 @@ ws = new WebSocket(proto + "://" + wsHost);
       li.textContent = `Матрица ${m} – ${q} бр.`;
       document.getElementById("stockList").appendChild(li);
     }
+
+    window.onload = () => {
+      initNav();
+      setupWS();
+      loadOffers();
+    };
   </script>
 </body>
 </html>
