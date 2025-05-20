@@ -9,7 +9,7 @@ const WebSocket = require('ws');
 app.use(express.static(__dirname));
 app.use(express.json());
 
-const db = new sqlite3.Database('./database.db');
+const db = new sqlite3.Database('./data.db');
 
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS offers (
