@@ -1,12 +1,85 @@
 <!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><title>Вход</title></head>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <title>Вход в системата</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #f9fafb;
+      font-family: sans-serif;
+    }
+
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #1f2937;
+    }
+
+    .login-box {
+      background-color: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 320px;
+    }
+
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #111827;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      background-color: #1f2937;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
 <body>
-  <h2>Вход</h2>
-  <form method="POST" action="/login">
-    <input type="text" name="username" placeholder="Потребител" />
-    <input type="password" name="password" placeholder="Парола" />
-    <button>Вход</button>
-  </form>
+  <div class="login-container">
+    <div class="login-box">
+      <h2>Вход в системата</h2>
+      <input type="text" id="username" placeholder="Потребителско име">
+      <input type="password" id="password" placeholder="Парола">
+      <button onclick="login()">Вход</button>
+      <div id="error" class="error">Невалидни данни за вход!</div>
+    </div>
+  </div>
+
+  <script>
+    function login() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      if ((user === "admin" && pass === "1234") || (user === "ivan" && pass === "ivan") || (user === "maria" && pass === "maria")) {
+        window.location.href = "index.html";
+      } else {
+        document.getElementById('error').style.display = 'block';
+      }
+    }
+  </script>
 </body>
 </html>

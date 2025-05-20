@@ -1,11 +1,718 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="bg">
 <head>
-    <meta charset="UTF-8">
-    <title>Платформа</title>
+  <meta charset="UTF-8">
+  <title>Технически изделия</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #f9fafb;
+    }
+    .container { display: flex; }
+    .sidebar {
+      width: 250px;
+      background-color: #1f2937;
+      color: white;
+      height: 100vh;
+      padding: 20px;
+      position: fixed;
+    }
+    .sidebar h2 { font-size: 18px; margin-bottom: 30px; }
+    .sidebar a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      margin: 12px 0;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .sidebar a:hover,
+    .sidebar a.active { background-color: #374151; }
+    .main {
+      margin-left: 270px;
+      padding: 40px;
+      width: calc(100% - 270px);
+    }
+    .hidden { display: none; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f3f4f6;
+      font-weight: bold;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    input, select, button {
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 100%;
+    }
+
+    .btn {
+      background: #1f2937;
+      color: white;
+      border: none;
+      cursor: pointer;
+      width: auto;
+    }
+
+    .btn.red { background: darkred; }
+
+    .online-users {
+      list-style: none;
+      padding: 0;
+    }
+
+    .online-users li::before {
+      content: "🟢 ";
+    }
+  </style>
 </head>
 <body>
-    <h1>Готова платформа за оферти и ремонти</h1>
+  <div class="container">
+    <div class="sidebar">
+      <h2>Технически изделия</h2>
+      <a href="#" class="nav" data-target="home">Начало</a>
+      <a href="#" class="nav" data-target="offers">Оферти и ремонти</a>
+      <a href="#" class="nav" data-target="stock">Склад</a>
+      <a href="#" class="nav" data-target="users">Потребители</a>
+<a href="#" class="nav" data-target="notifications">Известия</a>
+    </div>
+    <div class="main">
+      
+<div id="home">
+  <h1>Добре дошли в платформата</h1>
+  <div class="card">
+    <p>Въведи съобщение към чата:</p>
+    <div style="display:flex; gap:10px;">
+      <input id="chatInput" type="text" placeholder="Въведи съобщение...">
+      <button class="btn" onclick="sendMessage()">Изпрати</button>
+    </div>
+    <div id="chatBox" style="margin-top:15px;"></div>
+  </div>
+</div>
+
+<div id="offers" class="hidden">
+  <h2>Добави оферта</h2>
+  <div class="card">
+    <input id="project" placeholder="Проект №">
+    <input id="matrixNo" placeholder="Номер на матрица">
+    <input id="client" placeholder="Клиент">
+    <input id="desc" placeholder="Описание">
+    <input id="date" type="date" placeholder="Срок">
+    <input id="price" placeholder="Цена">
+    <input id="email" placeholder="Email">
+    <select id="priority">
+      <option>Висока</option>
+      <option>Средна</option>
+      <option>Ниска</option>
+    </select>
+    <input id="imageUpload" type="file" accept="image/*">
+    <button class="btn" onclick="addOffer()">Добави оферта</button>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Проект</th>
+        <th>Матрица</th>
+        <th>Клиент</th>
+        <th>Описание</th>
+        <th>Срок</th>
+        <th>Цена</th>
+        <th>Email</th>
+        <th>Приоритет</th>
+        <th>Снимка</th>
+        <th>Действия</th>
+      </tr>
+    </thead>
+    <tbody id="offerTable"></tbody>
+  </table>
+</div>
+
+<div id="stock" class="hidden">
+        <h2>Склад</h2>
+        <div class="card">
+          <input id="matrix" placeholder="Номер на матрица">
+          <input id="quantity" type="number" placeholder="Бройка">
+          <button class="btn" onclick="addStock()">Добави в склада</button>
+          <ul id="stockList"></ul>
+        </div>
+      </div>
+
+      
+<div id="notifications" class="hidden">
+  <h2>Оферти със срок след 3 дни</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Проект</th>
+        <th>Email</th>
+        <th>Краен срок</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>OFR-001</td>
+        <td>client1@example.com</td>
+        <td>2025-05-23</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="users" class="hidden">
+        <h2>Потребители на линия</h2>
+        <div class="card">
+          <ul class="online-users">
+            <li>admin</li>
+            <li>ivan</li>
+            <li>maria</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  document.querySelectorAll('.nav').forEach(link => {
+    link.addEventListener('click', function () {
+      const id = this.getAttribute('data-target');
+      document.querySelectorAll('.main > div').forEach(div => div.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+      document.querySelectorAll('.nav').forEach(a => a.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  
+
+
+function addOffer() {
+    const project = document.getElementById("project");
+    const matrixNo = document.getElementById("matrixNo");
+    const client = document.getElementById("client");
+    const desc = document.getElementById("desc");
+    const date = document.getElementById("date");
+    const price = document.getElementById("price");
+    const email = document.getElementById("email");
+    const priority = document.getElementById("priority");
+    const imageUpload = document.getElementById("imageUpload");
+
+    const today = new Date();
+    const dueDate = new Date(date.value);
+    const diffTime = dueDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    const table = document.getElementById('offerTable');
+    const row = document.createElement('tr');
+    let color = 'gray';
+    if (priority.value === 'Висока') color = 'red';
+    else if (priority.value === 'Средна') color = 'orange';
+    else if (priority.value === 'Ниска') color = 'green';
+
+    const imgID = "img" + Date.now();
+
+    row.innerHTML = `
+      <td>${project.value}</td>
+      <td>${matrixNo.value}</td>
+      <td>${client.value}</td>
+      <td>${desc.value}</td>
+      <td>${date.value}</td>
+      <td>${price.value}</td>
+      <td>${email.value}</td>
+      <td style="color:${color}; font-weight:bold;">${priority.value}</td>
+      <td><img src="#" id="${imgID}" width="60" style="border-radius:8px;" /></td>
+      <td>
+        <button class="btn" onclick="editOffer(this)">Редактирай</button>
+        <button class="btn red" onclick="this.closest('tr').remove()">Изтрий</button>
+      </td>`;
+
+    table.appendChild(row);
+
+    const file = imageUpload.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById(imgID).src = e.target.result;
+      }
+      reader.readAsDataURL(file);
+    }
+
+    if (diffDays === 3) {
+      const notifyTable = document.querySelector("#notifications tbody");
+      const nrow = document.createElement("tr");
+      nrow.innerHTML = `
+        <td>${project.value}</td>
+        <td>${email.value}</td>
+        <td>${date.value}</td>
+      `;
+      notifyTable.appendChild(nrow);
+    }
+
+    project.value = "";
+    matrixNo.value = "";
+    client.value = "";
+    desc.value = "";
+    date.value = "";
+    price.value = "";
+    email.value = "";
+    priority.value = "Средна";
+    imageUpload.value = "";
+}
+
+    matrixNo.value = "";
+    client.value = "";
+    desc.value = "";
+    date.value = "";
+    price.value = "";
+    email.value = "";
+    priority.value = "Средна";
+    imageUpload.value = "";
+}
+
+    const table = document.getElementById('offerTable');
+    const row = document.createElement('tr');
+    let color = 'gray';
+    if (priority.value === 'Висока') color = 'red';
+    else if (priority.value === 'Средна') color = 'orange';
+    else if (priority.value === 'Ниска') color = 'green';
+
+    const imgID = "img" + Date.now();
+
+    row.innerHTML = `
+      <td>${project.value}</td>
+      <td>${matrixNo.value}</td>
+      <td>${client.value}</td>
+      <td>${desc.value}</td>
+      <td>${date.value}</td>
+      <td>${price.value}</td>
+      <td>${email.value}</td>
+      <td style="color:${color}; font-weight:bold;">${priority.value}</td>
+      <td><img src="#" id="${imgID}" width="60" style="border-radius:8px;" /></td>
+      <td>
+        <button class="btn" onclick="editOffer(this)">Редактирай</button>
+        <button class="btn red" onclick="this.closest('tr').remove()">Изтрий</button>
+      </td>`;
+
+    table.appendChild(row);
+
+    const file = document.getElementById("imageUpload").files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById(imgID).src = e.target.result;
+      }
+      reader.readAsDataURL(file);
+    }
+}
+
+    const table = document.getElementById('offerTable');
+    const row = document.createElement('tr');
+    let color = 'gray';
+    if (priority.value === 'Висока') color = 'red';
+    else if (priority.value === 'Средна') color = 'orange';
+    else if (priority.value === 'Ниска') color = 'green';
+
+    row.innerHTML = `
+      <td>${project.value}</td>
+      <td>${matrixNo.value}</td><td>${client.value}</td><td>${desc.value}</td><td>${date.value}</td><td><img src="#" id="img${Date.now()}" width="60" style="border-radius:8px;" /></td>
+      <td>${desc.value}</td>
+      <td>${date.value}</td>
+      
+      
+      
+      <td>
+        <button class="btn" onclick="editOffer(this)">Редактирай</button>
+        <button class="btn red" onclick="this.closest('tr').remove()">Изтрий</button>
+      </td>`;
+    
+    table.appendChild(row);
+    const file = document.getElementById("imageUpload").files[0];
+    if (file) {
+      const reader = new FileReader();
+      const imgID = row.querySelector("img").id;
+      reader.onload = function(e) {
+        document.getElementById(imgID).src = e.target.result;
+      }
+      reader.readAsDataURL(file);
+    }
+    
+  }
+
+  function addStock() {
+    const list = document.getElementById('stockList');
+    const item = document.createElement('li');
+    item.textContent = `${matrix.value}: ${quantity.value} бр.`;
+    list.appendChild(item);
+  }
+
+  
+function sendMessage() {
+  const input = document.getElementById("chatInput");
+  const box = document.getElementById("chatBox");
+  if (input.value.trim() !== "") {
+    const msg = document.createElement("div");
+    msg.textContent = "👤 " + input.value;
+    msg.style.margin = "5px 0";
+    msg.style.padding = "8px";
+    msg.style.background = "#e5e7eb";
+    msg.style.borderRadius = "8px";
+    box.appendChild(msg);
+    input.value = "";
+  }
+}
+
+function editOffer(btn) {
+    alert("Редакция – в пълна система ще отваря форма с данните.");
+  }
+</script>
+
+<!-- Модален прозорец за визуализация -->
+<div id="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:9999;">
+  <img id="modalImg" src="" style="max-width:90%; max-height:90%; border:5px solid white; border-radius:12px;">
+</div>
+
+<script>
+  // Активиране на модал при клик на снимка
+  document.addEventListener("click", function(e) {
+    if (e.target.tagName === "IMG" && e.target.closest("td")) {
+      const modal = document.getElementById("modal");
+      const modalImg = document.getElementById("modalImg");
+      modal.style.display = "flex";
+      modalImg.src = e.target.src;
+    }
+    if (e.target.id === "modal") {
+      document.getElementById("modal").style.display = "none";
+    }
+  });
+</script>
+
+<script>
+document.querySelectorAll('.nav').forEach(link => {
+  link.addEventListener('click', function (e) {
+    e.preventDefault();
+    const id = this.getAttribute('data-target');
+    document.querySelectorAll('.main > div').forEach(div => div.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    document.querySelectorAll('.nav').forEach(a => a.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+function sendMessage() {
+  const input = document.getElementById("chatInput");
+  const box = document.getElementById("chatBox");
+  if (input && input.value.trim() !== "") {
+    const msg = document.createElement("div");
+    msg.textContent = "👤 " + input.value;
+    msg.style.margin = "5px 0";
+    msg.style.padding = "8px";
+    msg.style.background = "#e5e7eb";
+    msg.style.borderRadius = "8px";
+    box.appendChild(msg);
+    input.value = "";
+  }
+}
+
+function addOffer() {
+  const project = document.getElementById("project");
+  const matrixNo = document.getElementById("matrixNo");
+  const client = document.getElementById("client");
+  const desc = document.getElementById("desc");
+  const date = document.getElementById("date");
+  const price = document.getElementById("price");
+  const email = document.getElementById("email");
+  const priority = document.getElementById("priority");
+  const imageUpload = document.getElementById("imageUpload");
+
+  const today = new Date();
+  const dueDate = new Date(date.value);
+  const diffTime = dueDate - today;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  const table = document.getElementById('offerTable');
+  const row = document.createElement('tr');
+  let color = 'gray';
+  if (priority.value === 'Висока') color = 'red';
+  else if (priority.value === 'Средна') color = 'orange';
+  else if (priority.value === 'Ниска') color = 'green';
+
+  const imgID = "img" + Date.now();
+
+  row.innerHTML = `
+    <td>${project.value}</td>
+    <td>${matrixNo.value}</td>
+    <td>${client.value}</td>
+    <td>${desc.value}</td>
+    <td>${date.value}</td>
+    <td>${price.value}</td>
+    <td>${email.value}</td>
+    <td style="color:${color}; font-weight:bold;">${priority.value}</td>
+    <td><img src="#" id="${imgID}" width="60" style="border-radius:8px;" /></td>
+    <td>
+      <button class="btn" onclick="editOffer(this)">Редактирай</button>
+      <button class="btn red" onclick="this.closest('tr').remove()">Изтрий</button>
+    </td>`;
+
+  table.appendChild(row);
+
+  const file = imageUpload.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById(imgID).src = e.target.result;
+    }
+    reader.readAsDataURL(file);
+  }
+
+  if (diffDays === 3) {
+    const notifyTable = document.querySelector("#notifications tbody");
+    const nrow = document.createElement("tr");
+    nrow.innerHTML = `
+      <td>${project.value}</td>
+      <td>${email.value}</td>
+      <td>${date.value}</td>
+    `;
+    notifyTable.appendChild(nrow);
+  }
+
+  project.value = "";
+  matrixNo.value = "";
+  client.value = "";
+  desc.value = "";
+  date.value = "";
+  price.value = "";
+  email.value = "";
+  priority.value = "Средна";
+  imageUpload.value = "";
+}
+
+function editOffer(btn) {
+  alert("Редакцията е активирана. Моля попълнете нова стойност чрез формата.");
+}
+
+function addStock() {
+  const matrix = document.getElementById("matrix");
+  const quantity = document.getElementById("quantity");
+  const list = document.getElementById('stockList');
+  const item = document.createElement('li');
+  item.textContent = `${matrix.value}: ${quantity.value} бр.`;
+  list.appendChild(item);
+  matrix.value = "";
+  quantity.value = "";
+}
+</script>
 </body>
+
 </html>
+
+<script>
+document.querySelectorAll('.nav').forEach(link => {
+  link.addEventListener('click', function (e) {
+    e.preventDefault();
+    const id = this.getAttribute('data-target');
+    document.querySelectorAll('.main > div').forEach(div => div.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    document.querySelectorAll('.nav').forEach(a => a.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+
+<script>
+document.querySelectorAll('.nav').forEach(link => {
+  link.addEventListener('click', function (e) {
+    e.preventDefault();
+    const id = this.getAttribute('data-target');
+    document.querySelectorAll('.main > div').forEach(div => div.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    document.querySelectorAll('.nav').forEach(a => a.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+function sendMessage() {
+  const input = document.getElementById("chatInput");
+  const box = document.getElementById("chatBox");
+  if (input && input.value.trim() !== "") {
+    const msg = document.createElement("div");
+    msg.textContent = "👤 " + input.value;
+    msg.style.margin = "5px 0";
+    msg.style.padding = "8px";
+    msg.style.background = "#e5e7eb";
+    msg.style.borderRadius = "8px";
+    box.appendChild(msg);
+    input.value = "";
+  }
+}
+
+
+
+function addOffer() {
+    const project = document.getElementById("project");
+    const matrixNo = document.getElementById("matrixNo");
+    const client = document.getElementById("client");
+    const desc = document.getElementById("desc");
+    const date = document.getElementById("date");
+    const price = document.getElementById("price");
+    const email = document.getElementById("email");
+    const priority = document.getElementById("priority");
+    const imageUpload = document.getElementById("imageUpload");
+
+    const today = new Date();
+    const dueDate = new Date(date.value);
+    const diffTime = dueDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    const table = document.getElementById('offerTable');
+    const row = document.createElement('tr');
+    let color = 'gray';
+    if (priority.value === 'Висока') color = 'red';
+    else if (priority.value === 'Средна') color = 'orange';
+    else if (priority.value === 'Ниска') color = 'green';
+
+    const imgID = "img" + Date.now();
+
+    row.innerHTML = `
+      <td>${project.value}</td>
+      <td>${matrixNo.value}</td>
+      <td>${client.value}</td>
+      <td>${desc.value}</td>
+      <td>${date.value}</td>
+      <td>${price.value}</td>
+      <td>${email.value}</td>
+      <td style="color:${color}; font-weight:bold;">${priority.value}</td>
+      <td><img src="#" id="${imgID}" width="60" style="border-radius:8px;" /></td>
+      <td>
+        <button class="btn" onclick="editOffer(this)">Редактирай</button>
+        <button class="btn red" onclick="this.closest('tr').remove()">Изтрий</button>
+      </td>`;
+
+    table.appendChild(row);
+
+    const file = imageUpload.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById(imgID).src = e.target.result;
+      }
+      reader.readAsDataURL(file);
+    }
+
+    if (diffDays === 3) {
+      const notifyTable = document.querySelector("#notifications tbody");
+      const nrow = document.createElement("tr");
+      nrow.innerHTML = `
+        <td>${project.value}</td>
+        <td>${email.value}</td>
+        <td>${date.value}</td>
+      `;
+      notifyTable.appendChild(nrow);
+    }
+
+    project.value = "";
+    matrixNo.value = "";
+    client.value = "";
+    desc.value = "";
+    date.value = "";
+    price.value = "";
+    email.value = "";
+    priority.value = "Средна";
+    imageUpload.value = "";
+}
+
+    matrixNo.value = "";
+    client.value = "";
+    desc.value = "";
+    date.value = "";
+    price.value = "";
+    email.value = "";
+    priority.value = "Средна";
+    imageUpload.value = "";
+}
+
+    const table = document.getElementById('offerTable');
+    const row = document.createElement('tr');
+    let color = 'gray';
+    if (priority.value === 'Висока') color = 'red';
+    else if (priority.value === 'Средна') color = 'orange';
+    else if (priority.value === 'Ниска') color = 'green';
+
+    const imgID = "img" + Date.now();
+
+    row.innerHTML = `
+      <td>${project.value}</td>
+      <td>${matrixNo.value}</td>
+      <td>${client.value}</td>
+      <td>${desc.value}</td>
+      <td>${date.value}</td>
+      <td>${price.value}</td>
+      <td>${email.value}</td>
+      <td style="color:${color}; font-weight:bold;">${priority.value}</td>
+      <td><img src="#" id="${imgID}" width="60" style="border-radius:8px;" /></td>
+      <td>
+        <button class="btn" onclick="editOffer(this)">Редактирай</button>
+        <button class="btn red" onclick="this.closest('tr').remove()">Изтрий</button>
+      </td>`;
+
+    table.appendChild(row);
+
+    const file = document.getElementById("imageUpload").files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById(imgID).src = e.target.result;
+      }
+      reader.readAsDataURL(file);
+    }
+
+    project.value = "";
+    matrixNo.value = "";
+    client.value = "";
+    desc.value = "";
+    date.value = "";
+    price.value = "";
+    email.value = "";
+    priority.value = "Средна";
+    imageUpload.value = "";
+}
+
+function addStock() {
+  const matrix = document.getElementById("matrix");
+  const quantity = document.getElementById("quantity");
+  const list = document.getElementById('stockList');
+  const item = document.createElement('li');
+  item.textContent = `${matrix.value}: ${quantity.value} бр.`;
+  list.appendChild(item);
+  matrix.value = "";
+  quantity.value = "";
+}
+
+function editOffer(btn) {
+  alert("Редакцията е активирана. Попълнете нова стойност чрез формата.");
+}
+</script>
