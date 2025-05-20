@@ -36,6 +36,7 @@
 
     <section id="offers">
       <h2>Добави оферта</h2>
+<input id="searchOffers" placeholder="Търси по клиент или матрица..." onkeyup="filterOffers()">
       <input id="project" placeholder="Проект №">
       <input id="matrixNo" placeholder="Матрица">
       <input id="client" placeholder="Клиент">
@@ -146,7 +147,7 @@
             <td>${o.description}</td><td>${o.dueDate}</td><td>${o.price}</td>
             <td>${o.email}</td><td style="background:${color}">${o.priority}</td>
             <td><img src="${o.image}" /></td>
-            <td><button onclick="deleteOffer(${o.id})">Изтрий</button></td>`;
+            <td><button onclick="editOffer(${o.id})">Редактирай</button> <button onclick="deleteOffer(${o.id})">Изтрий</button></td>`;
           table.appendChild(row);
         });
       });
@@ -172,3 +173,43 @@
   </script>
 </body>
 </html>
+
+<script>
+let editId = null;
+
+function filterOffers() {
+  const term = document.getElementById("searchOffers").value.toLowerCase();
+  document.querySelectorAll("#offersTable tr").forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(term) ? "" : "none";
+  });
+}
+
+function editOffer(id) {
+  fetch("/api/offers").then(res => res.json()).then(data => {
+    const offer = data.find(o => o.id === id);
+    if (!offer) return;
+    document.getElementById("project").value = offer.project;
+    document.getElementById("matrixNo").value = offer.matrixNo;
+    document.getElementById("client").value = offer.client;
+    document.getElementById("description").value = offer.description;
+    document.getElementById("dueDate").value = offer.dueDate;
+    document.getElementById("price").value = offer.price;
+    document.getElementById("email").value = offer.email;
+    document.getElementById("priority").value = offer.priority;
+    editId = id;
+  });
+}
+
+function sendOffer(data) {
+  const url = editId ? "/api/offers/" + editId : "/api/offers";
+  const method = editId ? "PUT" : "POST";
+  fetch(url, {
+    method: method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  }).then(() => {
+    editId = null;
+    loadOffers();
+  });
+}
+</script>
