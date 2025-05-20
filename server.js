@@ -99,3 +99,22 @@ app.get('/api/offers', (req, res) => {
     }
   });
 });
+
+
+app.delete('/api/offers/:id', (req, res) => {
+  db.run("DELETE FROM offers WHERE id = ?", [req.params.id], function(err) {
+    if (err) res.status(500).json({ error: err.message });
+    else res.json({ success: true });
+  });
+});
+
+app.put('/api/offers/:id', (req, res) => {
+  const o = req.body;
+  db.run(`UPDATE offers SET project=?, matrixNo=?, client=?, description=?, dueDate=?, price=?, email=?, priority=?, image=?
+          WHERE id=?`,
+    [o.project, o.matrixNo, o.client, o.description, o.dueDate, o.price, o.email, o.priority, o.image, req.params.id],
+    function(err) {
+      if (err) res.status(500).json({ error: err.message });
+      else res.json({ success: true });
+    });
+});
