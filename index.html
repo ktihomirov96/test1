@@ -92,7 +92,16 @@
     }
   </style>
 </head>
-<body>
+
+<body onload="checkLogin()">
+<script>
+function checkLogin() {
+  if (sessionStorage.getItem("loggedIn") !== "true") {
+    window.location.href = "login.html";
+  }
+}
+</script>
+
   <div class="container">
     <div class="sidebar">
       <h2>Технически изделия</h2>
