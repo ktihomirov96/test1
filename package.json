@@ -1,14 +1,13 @@
+
 {
-  "name": "tech-platform",
+  "name": "tehnicheski-izdeliya",
   "version": "1.0.0",
+  "description": "Платформа за оферти и ремонти",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "sqlite3": "^5.1.2",
-    "body-parser": "^1.20.2",
-    "express-session": "^1.17.3"
+    "express": "^4.18.2"
   }
 }
