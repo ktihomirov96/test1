@@ -83,7 +83,9 @@
     }
 
     function setupWS() {
-      ws = new WebSocket("wss://" + window.location.host);
+      const proto = location.protocol === "https:" ? "wss" : "ws";
+const wsHost = location.hostname === "localhost" ? "localhost:3000" : location.host;
+ws = new WebSocket(proto + "://" + wsHost);
       ws.onmessage = function(event) {
         const msg = JSON.parse(event.data);
         const box = document.getElementById("chatBox");
