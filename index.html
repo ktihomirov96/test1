@@ -93,7 +93,9 @@
   </style>
 </head>
 
-<body onload="checkLogin()">
+
+<body onload="checkLogin(); loadOffers()">
+
 <script>
 function checkLogin() {
   if (sessionStorage.getItem("loggedIn") !== "true") {
@@ -744,3 +746,83 @@ function editOffer(btn) {
   alert("Редакцията е активирана. Попълнете нова стойност чрез формата.");
 }
 </script>
+
+<script>
+function loadOffers() {
+  fetch("/api/offers")
+    .then(res => res.json())
+    .then(data => {
+      const table = document.getElementById('offerTable');
+      table.innerHTML = '';
+      data.forEach(o => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${o.project}</td>
+          <td>${o.matrixNo}</td>
+          <td>${o.client}</td>
+          <td>${o.description}</td>
+          <td>${o.dueDate}</td>
+          <td>${o.price}</td>
+          <td>${o.email}</td>
+          <td style="color:${getPriorityColor(o.priority)}; font-weight:bold;">${o.priority}</td>
+          <td><img src="${o.image}" width="60" style="border-radius:8px;" /></td>
+          <td>
+            <button class="btn" onclick="editOffer(this)">Редактирай</button>
+            <button class="btn red" onclick="this.closest('tr').remove()">Изтрий</button>
+          </td>`;
+        table.appendChild(row);
+      });
+    });
+}
+
+function getPriorityColor(priority) {
+  if (priority === "Висока") return "red";
+  if (priority === "Средна") return "orange";
+  if (priority === "Ниска") return "green";
+  return "gray";
+}
+
+// Променяме addOffer за да POST-ва
+function addOffer() {
+  const project = document.getElementById("project").value;
+  const matrixNo = document.getElementById("matrixNo").value;
+  const client = document.getElementById("client").value;
+  const description = document.getElementById("desc").value;
+  const dueDate = document.getElementById("date").value;
+  const price = document.getElementById("price").value;
+  const email = document.getElementById("email").value;
+  const priority = document.getElementById("priority").value;
+  const imageUpload = document.getElementById("imageUpload");
+
+  let reader = new FileReader();
+  const file = imageUpload.files[0];
+
+  reader.onload = function(e) {
+    const image = file ? e.target.result : "";
+
+    fetch("/api/offers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        project, matrixNo, client, description, dueDate, price, email, priority, image
+      })
+    }).then(() => {
+      loadOffers(); // Презарежда таблицата
+    });
+  };
+
+  if (file) reader.readAsDataURL(file);
+  else reader.onload(); // Празно изображение
+
+  document.getElementById("project").value = "";
+  document.getElementById("matrixNo").value = "";
+  document.getElementById("client").value = "";
+  document.getElementById("desc").value = "";
+  document.getElementById("date").value = "";
+  document.getElementById("price").value = "";
+  document.getElementById("email").value = "";
+  document.getElementById("priority").value = "Средна";
+  document.getElementById("imageUpload").value = "";
+}
+</script>
+</html>
