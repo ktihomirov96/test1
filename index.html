@@ -115,19 +115,18 @@ function checkLogin() {
     </div>
     <div class="main">
       
+
 <div id="home">
-  <h1>Добре дошли в платформата</h1>
+  <h2>Чат между потребители</h2>
   <div class="card">
-    <p>Въведи съобщение към чата:</p>
-    <div style="display:flex; gap:10px;">
-      <input id="chatInput" type="text" placeholder="Въведи съобщение...">
-      <button class="btn" onclick="sendMessage()">Изпрати</button>
-    </div>
-    <div id="chatBox" style="margin-top:15px;"></div>
+    <input id="chatUsername" placeholder="Вашето име">
+    <div id="chatBox" style="margin-top:10px; max-height:300px; overflow:auto; background:#f1f1f1; padding:10px; border-radius:8px;"></div>
+    <input id="chatInput" placeholder="Въведи съобщение">
+    <button class="btn" onclick="sendWS()">Изпрати</button>
   </div>
 </div>
-
-<div id="offers" class="hidden">
+<div id="offers"
+ class="hidden">
   <h2>Добави оферта</h2>
   <div class="card">
     <input id="project" placeholder="Проект №">
@@ -824,5 +823,31 @@ function addOffer() {
   document.getElementById("priority").value = "Средна";
   document.getElementById("imageUpload").value = "";
 }
+</script>
+</html>
+
+<script>
+let ws;
+function setupWS() {
+  ws = new WebSocket("wss://" + window.location.host);
+  ws.onmessage = function(event) {
+    const msg = JSON.parse(event.data);
+    const box = document.getElementById("chatBox");
+    const div = document.createElement("div");
+    div.textContent = msg.timestamp.slice(11,16) + " – " + msg.username + ": " + msg.text;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+  };
+}
+
+function sendWS() {
+  const name = document.getElementById("chatUsername").value;
+  const input = document.getElementById("chatInput");
+  if (!name || !input.value) return;
+  ws.send(JSON.stringify({ username: name, text: input.value }));
+  input.value = "";
+}
+
+window.addEventListener("load", setupWS);
 </script>
 </html>

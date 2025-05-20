@@ -3,61 +3,60 @@ const express = require('express');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const app = express();
+const http = require('http');
+const WebSocket = require('ws');
 
 app.use(express.static(__dirname));
-app.use(express.json()); // body-parser
+app.use(express.json());
 
-// DB
 const db = new sqlite3.Database('./database.db');
 db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS offers (
+  db.run(`CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    project TEXT,
-    matrixNo TEXT,
-    client TEXT,
-    description TEXT,
-    dueDate TEXT,
-    price TEXT,
-    email TEXT,
-    priority TEXT,
-    image TEXT
+    username TEXT,
+    text TEXT,
+    timestamp TEXT
   )`);
 });
 
-// API - get
-app.get('/api/offers', (req, res) => {
-  db.all("SELECT * FROM offers", [], (err, rows) => {
-    if (err) {
-      console.error("GET /api/offers error:", err.message);
-      return res.status(500).json({ error: err.message });
-    }
-    res.json(rows);
+// API: зареждане на всички съобщения
+app.get('/api/messages', (req, res) => {
+  db.all("SELECT * FROM messages ORDER BY id DESC LIMIT 50", [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows.reverse());
   });
-});
-
-// API - post
-app.post('/api/offers', (req, res) => {
-  const o = req.body;
-  console.log("POST /api/offers received:", o);
-  if (!o.project) {
-    return res.status(400).json({ error: "Missing project field" });
-  }
-  const stmt = db.prepare("INSERT INTO offers (project, matrixNo, client, description, dueDate, price, email, priority, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-  stmt.run(o.project, o.matrixNo, o.client, o.description, o.dueDate, o.price, o.email, o.priority, o.image, function(err) {
-    if (err) {
-      console.error("DB insert error:", err.message);
-      return res.status(500).json({ error: err.message });
-    }
-    res.json({ id: this.lastID });
-  });
-  stmt.finalize();
 });
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'login.html'));
 });
 
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+wss.on('connection', function connection(ws) {
+  ws.on('message', function incoming(data) {
+    try {
+      const msg = JSON.parse(data);
+      if (!msg.username || !msg.text) return;
+      const timestamp = new Date().toISOString();
+      db.run("INSERT INTO messages (username, text, timestamp) VALUES (?, ?, ?)",
+        [msg.username, msg.text, timestamp]);
+
+      // изпращаме съобщението към всички клиенти
+      const payload = JSON.stringify({ username: msg.username, text: msg.text, timestamp });
+      wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(payload);
+        }
+      });
+    } catch (e) {
+      console.error("WS error:", e.message);
+    }
+  });
+});
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`✅ Сървърът работи на порт ${PORT}`);
+server.listen(PORT, () => {
+  console.log(`✅ WebSocket + сървър работи на порт ${PORT}`);
 });
