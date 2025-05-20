@@ -134,7 +134,11 @@
     <input id="imageUpload" type="file" accept="image/*">
     <button class="btn" onclick="addOffer()">Добави оферта</button>
   </div>
-  <table>
+  
+<div class="card">
+  <input id="searchInput" placeholder="Търси по клиент или матрица..." onkeyup="filterOffers()">
+</div>
+<table>
     <thead>
       <tr>
         <th>Проект</th>
@@ -174,13 +178,7 @@
         <th>Краен срок</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-        <td>OFR-001</td>
-        <td>client1@example.com</td>
-        <td>2025-05-23</td>
-      </tr>
-    </tbody>
+    <tbody id="notifyTable"></tbody>
   </table>
 </div>
 
@@ -263,7 +261,7 @@ function addOffer() {
     }
 
     if (diffDays === 3) {
-      const notifyTable = document.querySelector("#notifications tbody");
+      const notifyTable = document.getElementById("notifyTable");
       const nrow = document.createElement("tr");
       nrow.innerHTML = `
         <td>${project.value}</td>
@@ -490,7 +488,7 @@ function addOffer() {
   }
 
   if (diffDays === 3) {
-    const notifyTable = document.querySelector("#notifications tbody");
+    const notifyTable = document.getElementById("notifyTable");
     const nrow = document.createElement("tr");
     nrow.innerHTML = `
       <td>${project.value}</td>
@@ -526,7 +524,28 @@ function addStock() {
   quantity.value = "";
 }
 </script>
+
+<script>
+function filterOffers() {
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  const rows = document.querySelectorAll("#offerTable tr");
+
+  rows.forEach(row => {
+    const cells = row.querySelectorAll("td");
+    if (cells.length >= 3) {
+      const matrix = cells[1].textContent.toLowerCase();
+      const client = cells[2].textContent.toLowerCase();
+      if (matrix.includes(input) || client.includes(input)) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    }
+  });
+}
+</script>
 </body>
+
 
 </html>
 
@@ -624,7 +643,7 @@ function addOffer() {
     }
 
     if (diffDays === 3) {
-      const notifyTable = document.querySelector("#notifications tbody");
+      const notifyTable = document.getElementById("notifyTable");
       const nrow = document.createElement("tr");
       nrow.innerHTML = `
         <td>${project.value}</td>
