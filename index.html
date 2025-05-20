@@ -6,12 +6,15 @@
   <title>Технически изделия</title>
   <style>
     body { font-family: sans-serif; margin: 0; display: flex; }
-    nav { width: 200px; background: #1e3a5f; color: white; height: 100vh; padding: 10px; }
+    nav { width: 220px; background: #1e3a5f; color: white; height: 100vh; padding: 10px; }
     nav a { display: block; padding: 10px; color: white; text-decoration: none; }
     nav a.active { background: #3b82f6; }
-    main { flex: 1; padding: 20px; }
+    main { flex: 1; padding: 20px; background: #f9fafb; }
     .section { display: none; }
     .section.active { display: block; }
+    input, select { margin: 4px; padding: 6px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 6px; }
   </style>
 </head>
 <body onload="initApp()">
@@ -23,43 +26,68 @@
   </nav>
   <main>
     <div id="home" class="section active">
-      <h1>Чат</h1>
+      <h2>Чат</h2>
       <input id="chatUsername" placeholder="Вашето име">
-      <div id="chatBox" style="height:200px; overflow:auto; border:1px solid #ccc; margin:10px 0; padding:10px;"></div>
+      <div id="chatBox" style="height:200px; overflow:auto; border:1px solid #ccc; margin:10px 0;"></div>
       <input id="chatInput" placeholder="Съобщение">
       <button onclick="sendWS()">Изпрати</button>
     </div>
+
     <div id="offers" class="section">
-      <h1>Оферти и ремонти</h1>
-      <p>Тук ще има оферти...</p>
+      <h2>Добавяне на оферта</h2>
+      <input id="project" placeholder="Проект №">
+      <input id="matrixNo" placeholder="Матрица">
+      <input id="client" placeholder="Клиент">
+      <input id="description" placeholder="Описание">
+      <input id="dueDate" type="date">
+      <input id="price" placeholder="Цена">
+      <input id="email" placeholder="Email">
+      <select id="priority">
+        <option>Ниска</option>
+        <option>Средна</option>
+        <option>Висока</option>
+      </select>
+      <input type="file" id="imageUpload">
+      <button onclick="submitOffer()">Запази</button>
+      <table>
+        <thead>
+          <tr><th>Проект</th><th>Матрица</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th><th>Email</th><th>Приоритет</th><th>Снимка</th></tr>
+        </thead>
+        <tbody id="offersTable"></tbody>
+      </table>
     </div>
+
     <div id="warehouse" class="section">
-      <h1>Склад</h1>
-      <p>Управление на склад...</p>
+      <h2>Склад</h2>
+      <input id="stockMatrix" placeholder="Номер на матрица">
+      <input id="stockQty" type="number" placeholder="Количество">
+      <button onclick="addStock()">Добави</button>
+      <ul id="stockList"></ul>
     </div>
+
     <div id="users" class="section">
-      <h1>Потребители</h1>
-      <p>Само логнати потребители се виждат тук...</p>
+      <h2>Потребители онлайн</h2>
+      <p id="userList">✓ Вие сте онлайн</p>
     </div>
   </main>
+
   <script>
-    let activeTab = "home";
+    let ws;
     function initApp() {
       document.querySelectorAll(".nav-link").forEach(link => {
         link.addEventListener("click", e => {
           e.preventDefault();
-          const target = link.getAttribute("data-section");
-          document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
-          document.querySelector(`#${target}`).classList.add("active");
           document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
           link.classList.add("active");
-          activeTab = target;
+          const section = link.getAttribute("data-section");
+          document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+          document.getElementById(section).classList.add("active");
         });
       });
       setupWS();
+      loadOffers();
     }
 
-    let ws;
     function setupWS() {
       ws = new WebSocket("wss://" + window.location.host);
       ws.onmessage = function(event) {
@@ -69,7 +97,6 @@
         div.textContent = msg.timestamp.slice(11,16) + " – " + msg.username + ": " + msg.text;
         box.appendChild(div);
         box.scrollTop = box.scrollHeight;
-        playNotification(msg.username);
       };
     }
 
@@ -81,61 +108,68 @@
       input.value = "";
     }
 
-    function playNotification(sender) {
-      const currentUser = document.getElementById("chatUsername").value;
-      if (sender !== currentUser) {
-        const audio = new Audio("https://notificationsounds.com/storage/sounds/file-sounds-1156-pristine.mp3");
-        audio.volume = 0.5;
-        audio.play().catch(() => {});
+    function submitOffer() {
+      const data = {
+        project: document.getElementById("project").value,
+        matrixNo: document.getElementById("matrixNo").value,
+        client: document.getElementById("client").value,
+        description: document.getElementById("description").value,
+        dueDate: document.getElementById("dueDate").value,
+        price: document.getElementById("price").value,
+        email: document.getElementById("email").value,
+        priority: document.getElementById("priority").value,
+        image: ""
+      };
+      const file = document.getElementById("imageUpload").files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          data.image = e.target.result;
+          sendOffer(data);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        sendOffer(data);
       }
     }
-  
-function deleteOffer(id) {
-  if (!confirm("Сигурни ли сте, че искате да изтриете тази оферта?")) return;
-  fetch("/api/offers/" + id, {
-    method: "DELETE"
-  }).then(() => loadOffers());
-}
 
-let 
-editingId = null;
-document.getElementById("successMsg").style.display = "block";
-setTimeout(() => {
-  document.getElementById("successMsg").style.display = "none";
-}, 3000);
+    function sendOffer(data) {
+      fetch("/api/offers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      }).then(() => loadOffers());
+    }
 
-function editOffer(offer) {
-  editingId = offer.id;
-  document.getElementById("project").value = offer.project;
-  document.getElementById("matrixNo").value = offer.matrixNo;
-  document.getElementById("client").value = offer.client;
-  document.getElementById("desc").value = offer.description;
-  document.getElementById("date").value = offer.dueDate;
-  document.getElementById("price").value = offer.price;
-  document.getElementById("email").value = offer.email;
-  document.getElementById("priority").value = offer.priority;
-  window.scrollTo(0, 0);
-}
+    function loadOffers() {
+      fetch("/api/offers").then(res => res.json()).then(data => {
+        const table = document.getElementById("offersTable");
+        table.innerHTML = "";
+        data.forEach(o => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${o.project}</td>
+            <td>${o.matrixNo}</td>
+            <td>${o.client}</td>
+            <td>${o.description}</td>
+            <td>${o.dueDate}</td>
+            <td>${o.price}</td>
+            <td>${o.email}</td>
+            <td>${o.priority}</td>
+            <td><img src="${o.image}" width="60"></td>
+          `;
+          table.appendChild(row);
+        });
+      });
+    }
 
-function sendOffer(data) {
-  const method = editingId ? "PUT" : "POST";
-  const url = editingId ? "/api/offers/" + editingId : "/api/offers";
-  fetch(url, {
-    method,
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify(data)
-  }).then(() => {
-    loadOffers();
-    
-editingId = null;
-document.getElementById("successMsg").style.display = "block";
-setTimeout(() => {
-  document.getElementById("successMsg").style.display = "none";
-}, 3000);
-
-    document.querySelectorAll("#offers input, #offers select").forEach(el => el.value = "");
-  });
-}
-</script>
+    function addStock() {
+      const matrix = document.getElementById("stockMatrix").value;
+      const qty = document.getElementById("stockQty").value;
+      const li = document.createElement("li");
+      li.textContent = `Матрица ${matrix} – ${qty} бр.`;
+      document.getElementById("stockList").appendChild(li);
+    }
+  </script>
 </body>
 </html>
