@@ -52,7 +52,11 @@
       <input id="email" placeholder="Email"><select id="priority">
         <option>Ниска</option><option>Средна</option><option>Висока</option></select>
       <input type="file" id="imageUpload"><button onclick="submitOffer()">Запази</button>
-      <table><thead><tr><th>Проект</th><th>Матрица</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th><th>Email</th><th>Приоритет</th><th>Снимка</th></tr><th>Действия</th></thead>
+      
+<div style="margin: 10px 0;">
+  <input id="searchBox" type="text" placeholder="Търси по клиент или матрица..." oninput="filterOffers()" style="padding: 6px; width: 300px; border: 1px solid #ccc; border-radius: 4px;">
+</div>
+<table><thead><tr><th>Проект</th><th>Матрица</th><th>Клиент</th><th>Описание</th><th>Дата на стартиране</th><th>Цена</th><th>Срок от доставчик</th><th>Приоритет</th><th>Снимка</th></tr><th>Действия</th></thead>
       <tbody id="offersTable"></tbody></table>
     </section>
     <section id="warehouse">
@@ -60,7 +64,11 @@
       <input id="stockMatrix" placeholder="Матрица">
       <input id="stockDeadline" type="date">
       <button onclick="addStock()">Добави</button>
-      <ul id="stockList"></ul>
+      
+<div style="margin: 10px 0;">
+  <input id="stockSearch" type="text" placeholder="Търси по матрица..." oninput="filterStock()" style="padding: 6px; width: 300px; border-radius: 4px; border: 1px solid #ccc;">
+</div>
+<ul id="stockList"></ul>
     </section>
     <section id="users">
       <h2>Потребители</h2>
@@ -197,6 +205,27 @@ function editOffer(id) {
 
 function deleteOffer(id) {
   fetch(`/api/offers/${id}`, { method: "DELETE" }).then(loadOffers);
+}
+
+
+
+
+function filterOffers() {
+  const term = document.getElementById("searchBox")?.value.toLowerCase();
+  const rows = document.querySelectorAll("#offers table tbody tr");
+  rows.forEach(row => {
+    const matrix = row.children[1]?.textContent.toLowerCase() || "";
+    const client = row.children[2]?.textContent.toLowerCase() || "";
+    row.style.display = (matrix.includes(term) || client.includes(term)) ? "" : "none";
+  });
+}
+
+function filterStock() {
+  const term = document.getElementById("stockSearch")?.value.toLowerCase();
+  const items = document.querySelectorAll("#stockList li");
+  items.forEach(li => {
+    li.style.display = li.textContent.toLowerCase().includes(term) ? "" : "none";
+  });
 }
 </script>
 
