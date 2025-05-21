@@ -59,3 +59,21 @@ wss.on('connection', function connection(ws) {
 });
 
 server.listen(3000, () => console.log('Сървърът стартира на http://localhost:3000'));
+
+app.put('/api/offers/:id', (req, res) => {
+  const o = req.body;
+  db.run(`UPDATE offers SET project=?, matrixNo=?, client=?, description=?, dueDate=?, price=?, email=?, priority=?, image=?
+          WHERE id=?`,
+          [o.project, o.matrixNo, o.client, o.description, o.dueDate, o.price, o.email, o.priority, o.image, req.params.id],
+          err => {
+            if (err) res.status(500).json({ error: err.message });
+            else res.json({ success: true });
+          });
+});
+
+app.delete('/api/offers/:id', (req, res) => {
+  db.run("DELETE FROM offers WHERE id=?", [req.params.id], err => {
+    if (err) res.status(500).json({ error: err.message });
+    else res.json({ success: true });
+  });
+});

@@ -52,7 +52,7 @@
       <input id="email" placeholder="Email"><select id="priority">
         <option>Ниска</option><option>Средна</option><option>Висока</option></select>
       <input type="file" id="imageUpload"><button onclick="submitOffer()">Запази</button>
-      <table><thead><tr><th>Проект</th><th>Матрица</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th><th>Email</th><th>Приоритет</th><th>Снимка</th></tr></thead>
+      <table><thead><tr><th>Проект</th><th>Матрица</th><th>Клиент</th><th>Описание</th><th>Срок</th><th>Цена</th><th>Email</th><th>Приоритет</th><th>Снимка</th></tr><th>Действия</th></thead>
       <tbody id="offersTable"></tbody></table>
     </section>
     <section id="warehouse">
@@ -120,7 +120,10 @@
           let color = o.priority==="Висока"?"#f87171":o.priority==="Средна"?"#facc15":"#34d399";
           offersTable.innerHTML += `<tr><td>${o.project}</td><td>${o.matrixNo}</td><td>${o.client}</td>
             <td>${o.description}</td><td>${o.dueDate}</td><td>${o.price}</td><td>${o.email}</td>
-            <td style="background:${color}">${o.priority}</td><td><img src="${o.image}" /></td></tr>`;
+            <td style="background:${color}">${o.priority}</td><td><img src="${o.image}" /></td><td>
+  <button onclick="editOffer(${o.id})">Редактирай</button>
+  <button onclick="deleteOffer(${o.id})" style='background:#dc2626;color:white;'>Изтрий</button>
+</td></tr>`;
         });
       });
     }
@@ -138,6 +141,64 @@
     }
 
     loadOffers();
-  </script>
+  
+function editOffer(id) {
+  fetch("/api/offers").then(r => r.json()).then(data => {
+    const o = data.find(x => x.id === id);
+    if (!o) return;
+    project.value = o.project;
+    matrixNo.value = o.matrixNo;
+    client.value = o.client;
+    description.value = o.description;
+    dueDate.value = o.dueDate;
+    price.value = o.price;
+    email.value = o.email;
+    priority.value = o.priority;
+    imageUpload.value = "";
+    document.getElementById("submitButton")?.remove();
+    const btn = document.createElement("button");
+    btn.id = "submitButton";
+    btn.textContent = "Запази промените";
+    btn.onclick = () => {
+      const updated = {
+        project: project.value,
+        matrixNo: matrixNo.value,
+        client: client.value,
+        description: description.value,
+        dueDate: dueDate.value,
+        price: price.value,
+        email: email.value,
+        priority: priority.value,
+        image: o.image
+      };
+      const file = imageUpload.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          updated.image = e.target.result;
+          fetch(`/api/offers/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updated)
+          }).then(() => { loadOffers(); btn.remove(); });
+        };
+        reader.readAsDataURL(file);
+      } else {
+        fetch(`/api/offers/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updated)
+        }).then(() => { loadOffers(); btn.remove(); });
+      }
+    };
+    document.getElementById("offers").appendChild(btn);
+  });
+}
+
+function deleteOffer(id) {
+  fetch(`/api/offers/${id}`, { method: "DELETE" }).then(loadOffers);
+}
+</script>
+
 </body>
 </html>
