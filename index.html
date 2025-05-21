@@ -81,6 +81,60 @@
   </main>
   
 
+
+<script>
+function submitOffer() {
+  const projectVal = project.value;
+  const matrixVal = matrixNo.value;
+  const clientVal = client.value;
+  const descriptionVal = description.value;
+  const dueDateVal = dueDate.value;
+  const priceVal = price.value;
+  const emailVal = email.value;
+  const priorityVal = priority.value;
+  const statusVal = status.value;
+  const imageFile = imageUpload.files[0];
+
+  const offer = {
+    project: projectVal,
+    matrixNo: matrixVal,
+    client: clientVal,
+    description: descriptionVal,
+    dueDate: dueDateVal,
+    price: priceVal,
+    email: emailVal,
+    priority: priorityVal,
+    status: statusVal,
+    image: ""
+  };
+
+  if (imageFile) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      offer.image = e.target.result;
+      sendOffer(offer);
+    };
+    reader.readAsDataURL(imageFile);
+  } else {
+    sendOffer(offer);
+  }
+}
+
+function sendOffer(offer) {
+  fetch("/api/offers", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(offer)
+  }).then(() => {
+    loadOffers();
+    project.value = matrixNo.value = client.value = description.value = dueDate.value = price.value = email.value = "";
+    priority.value = "Ниска";
+    status.value = "в процес";
+    imageUpload.value = "";
+  });
+}
+</script>
+
 </body>
 </html>
 
