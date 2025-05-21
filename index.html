@@ -82,61 +82,8 @@
   
 
 
-<script>
-function submitOffer() {
-  const projectVal = project.value;
-  const matrixVal = matrixNo.value;
-  const clientVal = client.value;
-  const descriptionVal = description.value;
-  const dueDateVal = dueDate.value;
-  const priceVal = price.value;
-  const emailVal = email.value;
-  const priorityVal = priority.value;
-  const statusVal = status.value;
-  const imageFile = imageUpload.files[0];
 
-  const offer = {
-    project: projectVal,
-    matrixNo: matrixVal,
-    client: clientVal,
-    description: descriptionVal,
-    dueDate: dueDateVal,
-    price: priceVal,
-    email: emailVal,
-    priority: priorityVal,
-    status: statusVal,
-    image: ""
-  };
 
-  if (imageFile) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      offer.image = e.target.result;
-      sendOffer(offer);
-    };
-    reader.readAsDataURL(imageFile);
-  } else {
-    sendOffer(offer);
-  }
-}
-
-function sendOffer(offer) {
-  fetch("/api/offers", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(offer)
-  }).then(() => {
-    loadOffers();
-    project.value = matrixNo.value = client.value = description.value = dueDate.value = price.value = email.value = "";
-    priority.value = "Ниска";
-    status.value = "в процес";
-    imageUpload.value = "";
-  });
-}
-</script>
-
-</body>
-</html>
 
 <script>
 document.querySelectorAll('.nav-link').forEach(link => {
@@ -145,9 +92,119 @@ document.querySelectorAll('.nav-link').forEach(link => {
     const target = link.getAttribute('data-target');
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
     document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    document.getElementById(target).classList.add('active');
     link.classList.add('active');
-    const section = document.getElementById(target);
-    if (section) section.classList.add('active');
   });
 });
+
+function loadOffers() {
+  fetch("/api/offers").then(res => res.json()).then(data => {
+    const tbody = document.querySelector("#offers table tbody");
+    tbody.innerHTML = "";
+    data.forEach(o => {
+      let color = o.priority === "Висока" ? "#f87171" : o.priority === "Средна" ? "#facc15" : "#34d399";
+      let statusColor = o.status === "завършена" ? "#4ade80" : "#facc15";
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${o.project}</td><td>${o.matrixNo}</td><td>${o.client}</td>
+        <td>${o.description}</td><td>${o.dueDate}</td><td>${o.price}</td>
+        <td>${o.email}</td><td style="background:${color}">${o.priority}</td>
+        <td style="background:${statusColor}">${o.status}</td><td><img src="${o.image}" /></td>`;
+      tbody.appendChild(row);
+    });
+  });
+}
+
+function submitOffer() {
+  const file = imageUpload.files[0];
+  const reader = new FileReader();
+  const offer = {
+    project: project.value,
+    matrixNo: matrixNo.value,
+    client: client.value,
+    description: description.value,
+    dueDate: dueDate.value,
+    price: price.value,
+    email: email.value,
+    priority: priority.value,
+    status: status.value,
+    image: ""
+  };
+  if (file) {
+    reader.onload = function(e) {
+      offer.image = e.target.result;
+      sendOffer(offer);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    sendOffer(offer);
+  }
+}
+
+function sendOffer(data) {
+  fetch("/api/offers", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  }).then(() => {
+    loadOffers();
+    project.value = matrixNo.value = client.value = description.value = dueDate.value = price.value = email.value = "";
+    priority.value = "Ниска";
+    status.value = "в процес";
+    imageUpload.value = "";
+  });
+}
+
+function addStock() {
+  const m = document.getElementById("stockMatrix").value;
+  const d = document.getElementById("stockDeadline").value;
+  if (!m || !d) return;
+  const now = new Date(), end = new Date(d);
+  const days = Math.ceil((end - now)/(1000*60*60*24));
+  let color = "#34d399"; if (days <= 7) color = "#facc15"; if (days <= 3) color = "#f87171";
+  const li = document.createElement("li");
+  li.style.background = color;
+  li.textContent = `Матрица ${m} – Краен срок: ${d} (${days} дни)`;
+  document.getElementById("stockList").appendChild(li);
+}
+
+const proto = location.protocol === "https:" ? "wss" : "ws";
+const host = location.hostname === "localhost" ? "localhost:3000" : location.host;
+const ws = new WebSocket(proto + "://" + host);
+ws.onmessage = e => {
+  const m = JSON.parse(e.data);
+  const box = document.getElementById("chatBox");
+  if (box) box.innerHTML += m.timestamp.slice(11,16) + " – " + m.username + ": " + m.text + "<br>";
+};
+function sendWS() {
+  const u = document.getElementById("chatUsername").value;
+  const t = document.getElementById("chatInput").value;
+  if (u && t) ws.send(JSON.stringify({ username: u, text: t }));
+  document.getElementById("chatInput").value = "";
+}
+
+function filterOffers() {
+  const term = document.getElementById("searchBox")?.value.toLowerCase();
+  const rows = document.querySelectorAll("#offers table tbody tr");
+  rows.forEach(row => {
+    const matrix = row.children[1]?.textContent.toLowerCase() || "";
+    const client = row.children[2]?.textContent.toLowerCase() || "";
+    row.style.display = (matrix.includes(term) || client.includes(term)) ? "" : "none";
+  });
+}
+
+function filterStock() {
+  const term = document.getElementById("stockSearch")?.value.toLowerCase();
+  const items = document.querySelectorAll("#stockList li");
+  items.forEach(li => {
+    li.style.display = li.textContent.toLowerCase().includes(term) ? "" : "none";
+  });
+}
+
+window.onload = loadOffers;
 </script>
+
+</body>
+</html>
+
+
