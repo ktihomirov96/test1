@@ -102,33 +102,7 @@
       document.getElementById("chatInput").value = "";
     }
 
-    function submitOffer() {
-  const data = {
-    project: project.value,
-    matrixNo: matrixNo.value,
-    client: client.value,
-    description: description.value,
-    dueDate: dueDate.value,
-    price: price.value,
-    email: email.value,
-    priority: priority.value,
-    status: status.value,
-    image: ""
-  };
-
-  const file = imageUpload.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      data.image = e.target.result;
-      sendOffer(data);
-    };
-    reader.readAsDataURL(file);
-  } else {
-    sendOffer(data);
-  }
-}
-function sendOffer(data) {
+    (data) {
   fetch("/api/offers", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -255,6 +229,49 @@ function filterStock() {
     li.style.display = li.textContent.toLowerCase().includes(term) ? "" : "none";
   });
 }
+
+function submitOffer() {
+  const file = imageUpload.files[0];
+  const reader = new FileReader();
+
+  const data = {
+    project: project.value,
+    matrixNo: matrixNo.value,
+    client: client.value,
+    description: description.value,
+    dueDate: dueDate.value,
+    price: price.value,
+    email: email.value,
+    priority: priority.value,
+    status: status.value,
+    image: ""
+  };
+
+  if (file) {
+    reader.onload = function(e) {
+      data.image = e.target.result;
+      sendOffer(data);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    sendOffer(data);
+  }
+}
+
+function sendOffer(data) {
+  fetch("/api/offers", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  }).then(() => {
+    loadOffers();
+    project.value = matrixNo.value = client.value = description.value = dueDate.value = price.value = email.value = "";
+    priority.value = "Ниска";
+    status.value = "в процес";
+    imageUpload.value = "";
+  });
+}
+
 </script>
 
 </body>
