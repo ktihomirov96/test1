@@ -1,18 +1,7 @@
 
 const nodemailer = require('nodemailer');
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./data.db');
 
-// Настройка на SMTP
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.MAIL_USER || 'youremail@gmail.com',
-    pass: process.env.MAIL_PASS || 'yourpassword'
-  }
-});
-
-function checkDeadlinesAndSendEmails() {
+function checkDeadlinesAndSendEmails(db) {
   const today = new Date();
   db.all("SELECT * FROM offers", [], (err, rows) => {
     if (err) return console.error("DB error", err);
@@ -20,6 +9,13 @@ function checkDeadlinesAndSendEmails() {
       const due = new Date(offer.dueDate);
       const diff = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
       if (diff === 3 && offer.email) {
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: process.env.MAIL_USER || 'youremail@gmail.com',
+            pass: process.env.MAIL_PASS || 'yourpassword'
+          }
+        });
         const mailOptions = {
           from: 'Оферти <no-reply@platform.com>',
           to: offer.email,
@@ -40,4 +36,5 @@ function checkDeadlinesAndSendEmails() {
     });
   });
 }
-checkDeadlinesAndSendEmails();
+
+module.exports = checkDeadlinesAndSendEmails;

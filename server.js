@@ -11,7 +11,7 @@ const wss = new WebSocket.Server({ server });
 app.use(express.static('.'));
 app.use(express.json());
 
-// Създаване на таблицата при нужда
+// Създаване на таблицата
 db.run(`CREATE TABLE IF NOT EXISTS offers (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   project TEXT,
@@ -23,7 +23,10 @@ db.run(`CREATE TABLE IF NOT EXISTS offers (
   email TEXT,
   priority TEXT,
   image TEXT
-)`);
+)`, () => {
+  // Извикваме email checker чак след създаване на таблицата
+  require('./emailNotifier')(db);
+});
 
 app.get('/api/offers', (req, res) => {
   db.all("SELECT * FROM offers", [], (err, rows) => {
@@ -56,5 +59,3 @@ wss.on('connection', function connection(ws) {
 });
 
 server.listen(3000, () => console.log('Сървърът стартира на http://localhost:3000'));
-
-require('./emailNotifier');
