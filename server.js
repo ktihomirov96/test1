@@ -11,6 +11,20 @@ const wss = new WebSocket.Server({ server });
 app.use(express.static('.'));
 app.use(express.json());
 
+// Създаване на таблицата при нужда
+db.run(`CREATE TABLE IF NOT EXISTS offers (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  project TEXT,
+  matrixNo TEXT,
+  client TEXT,
+  description TEXT,
+  dueDate TEXT,
+  price TEXT,
+  email TEXT,
+  priority TEXT,
+  image TEXT
+)`);
+
 app.get('/api/offers', (req, res) => {
   db.all("SELECT * FROM offers", [], (err, rows) => {
     if (err) res.status(500).json({ error: err.message });
