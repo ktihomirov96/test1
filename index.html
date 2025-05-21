@@ -109,7 +109,7 @@ function loadOffers() {
         <td>${o.project}</td><td>${o.matrixNo}</td><td>${o.client}</td>
         <td>${o.description}</td><td>${o.dueDate}</td><td>${o.price}</td>
         <td>${o.email}</td><td style="background:${color}">${o.priority}</td>
-        <td><span style="color:${statusColor}; font-weight:bold">${o.status}</span></td><td><img src="${o.image}" /></td>`;
+        <td><span style="color:${(o.status === "завършена") ? "#22c55e" : (o.status === "в процес") ? "#eab308" : "#6b7280"}; font-weight:bold">${o.status || "в процес"}</span></td><td><img src="${o.image}" /></td>`;
       tbody.appendChild(row);
     });
   });
