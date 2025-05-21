@@ -103,13 +103,13 @@ function loadOffers() {
     tbody.innerHTML = "";
     data.forEach(o => {
       let color = o.priority === "Висока" ? "#f87171" : o.priority === "Средна" ? "#facc15" : "#34d399";
-      let statusColor = o.status === "завършена" ? "#4ade80" : "#facc15";
+      let statusColor = o.status === "завършена" ? "#4ade80" : o.status === "в процес" ? "#facc15" : "#d1d5db";
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${o.project}</td><td>${o.matrixNo}</td><td>${o.client}</td>
         <td>${o.description}</td><td>${o.dueDate}</td><td>${o.price}</td>
         <td>${o.email}</td><td style="background:${color}">${o.priority}</td>
-        <td style="background:${statusColor}">${o.status}</td><td><img src="${o.image}" /></td>`;
+        <td style="background:${statusColor}">${o.status || "в процес"}</td><td><img src="${o.image}" /></td>`;
       tbody.appendChild(row);
     });
   });
