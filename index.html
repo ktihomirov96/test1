@@ -51,12 +51,13 @@
       <input id="dueDate" type="date"><input id="price" placeholder="Цена">
       <input id="email" placeholder="Email"><select id="priority">
         <option>Ниска</option><option>Средна</option><option>Висока</option></select>
-      <input type="file" id="imageUpload"><button onclick="submitOffer()">Запази</button>
+      <input type="file" id="imageUpload">
+<select id="status"><option>в процес</option><option>завършена</option></select><button onclick="submitOffer()">Запази</button>
       
 <div style="margin: 10px 0;">
   <input id="searchBox" type="text" placeholder="Търси по клиент или матрица..." oninput="filterOffers()" style="padding: 6px; width: 300px; border: 1px solid #ccc; border-radius: 4px;">
 </div>
-<table><thead><tr><th>Проект</th><th>Матрица</th><th>Клиент</th><th>Описание</th><th>Дата на стартиране</th><th>Цена</th><th>Срок от доставчик</th><th>Приоритет</th><th>Снимка</th></tr><th>Действия</th></thead>
+<table><thead><tr><th>Проект</th><th>Матрица</th><th>Клиент</th><th>Описание</th><th>Дата на стартиране</th><th>Цена</th><th>Срок от доставчик</th><th>Приоритет</th><th>Статус</th><th>Снимка</th></tr><th>Действия</th></thead>
       <tbody id="offersTable"></tbody></table>
     </section>
     <section id="warehouse">
@@ -102,20 +103,45 @@
     }
 
     function submitOffer() {
-      const data = {
-        project: project.value, matrixNo: matrixNo.value, client: client.value,
-        description: description.value, dueDate: dueDate.value, price: price.value,
-        email: email.value, priority: priority.value, image: ""
-      };
-      const file = imageUpload.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = e => { data.image = e.target.result; sendOffer(data); };
-        reader.readAsDataURL(file); return;
-      }
+  const data = {
+    project: project.value,
+    matrixNo: matrixNo.value,
+    client: client.value,
+    description: description.value,
+    dueDate: dueDate.value,
+    price: price.value,
+    email: email.value,
+    priority: priority.value,
+    status: status.value,
+    image: ""
+  };
+
+  const file = imageUpload.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      data.image = e.target.result;
       sendOffer(data);
-    }
-    function sendOffer(data) {
+    };
+    reader.readAsDataURL(file);
+  } else {
+    sendOffer(data);
+  }
+}
+function sendOffer(data) {
+  fetch("/api/offers", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  }).then(() => {
+    loadOffers();
+    project.value = matrixNo.value = client.value = description.value = dueDate.value = price.value = email.value = "";
+    priority.value = "Ниска";
+    status.value = "в процес";
+    imageUpload.value = "";
+  });
+}
+function sendOffer(data) {
       fetch("/api/offers", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
@@ -131,7 +157,8 @@
             <td style="background:${color}">${o.priority}</td><td><img src="${o.image}" /></td><td>
   <button onclick="editOffer(${o.id})">Редактирай</button>
   <button onclick="deleteOffer(${o.id})" style='background:#dc2626;color:white;'>Изтрий</button>
-</td></tr>`;
+</td><td style="background:${o.status==='завършена' ? '#4ade80' : '#facc15'}">${o.status}</td>
+<td><img src="${o.image}" /></td></tr>`;
         });
       });
     }
@@ -177,7 +204,8 @@ function editOffer(id) {
         price: price.value,
         email: email.value,
         priority: priority.value,
-        image: o.image
+        image: o.image,
+        status: status.value
       };
       const file = imageUpload.files[0];
       if (file) {

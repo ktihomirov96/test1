@@ -9,6 +9,10 @@ const WebSocket = require('ws');
 const wss = new WebSocket.Server({ server });
 
 app.use(express.static('.'));
+
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/login.html');
+});
 app.use(express.json());
 
 // Създаване на таблицата
